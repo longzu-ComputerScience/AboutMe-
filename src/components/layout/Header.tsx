@@ -1,29 +1,45 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Menu, X, Moon, Sun, Code2 } from "lucide-react";
-
-const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/projects", label: "Projects" },
-    { href: "/blog", label: "Blog" },
-    { href: "/services", label: "Services" },
-    { href: "/cv", label: "CV" },
-    { href: "/contact", label: "Contact" },
-];
+import { useTranslations } from "next-intl";
+import { setLocale } from "@/lib/locale";
 
 export default function Header() {
+    const t = useTranslations("nav");
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDark, setIsDark] = useState(true);
+    const [isVietnamese, setIsVietnamese] = useState(true);
+    const [isPending, startTransition] = useTransition();
+    const router = useRouter();
+
+    const navLinks = [
+        { href: "/", label: t("home") },
+        { href: "/about", label: t("about") },
+        { href: "/projects", label: t("projects") },
+        { href: "/blog", label: t("blog") },
+        { href: "/services", label: t("services") },
+        { href: "/cv", label: t("cv") },
+        { href: "/contact", label: t("contact") },
+    ];
 
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 20);
         };
         window.addEventListener("scroll", handleScroll);
+
+        // Check current locale on mount
+        const checkLocale = async () => {
+            const response = await fetch("/api/locale");
+            const data = await response.json();
+            setIsVietnamese(data.locale === "vi");
+        };
+        checkLocale();
+
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
@@ -32,11 +48,21 @@ export default function Header() {
         document.documentElement.classList.toggle("dark");
     };
 
+    const toggleLanguage = () => {
+        const newLocale = isVietnamese ? "en" : "vi";
+        setIsVietnamese(!isVietnamese);
+
+        startTransition(async () => {
+            await setLocale(newLocale);
+            router.refresh();
+        });
+    };
+
     return (
         <header
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                    ? "bg-dark-bg/80 backdrop-blur-lg shadow-lg border-b border-dark-border"
-                    : "bg-transparent"
+                ? "bg-dark-bg/80 backdrop-blur-lg shadow-lg border-b border-dark-border"
+                : "bg-transparent"
                 }`}
             style={{ height: "var(--header-height)" }}
         >
@@ -68,6 +94,19 @@ export default function Header() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
+                        {/* Language Toggle */}
+                        <button
+                            onClick={toggleLanguage}
+                            disabled={isPending}
+                            className={`px-2 py-1.5 rounded-lg hover:bg-white/10 transition-colors duration-200 text-sm font-medium flex items-center gap-1 ${isPending ? 'opacity-50' : ''}`}
+                            aria-label="Toggle language"
+                            title={isVietnamese ? "Switch to English" : "Chuyển sang Tiếng Việt"}
+                        >
+                            <span className={`transition-opacity ${isVietnamese ? "opacity-100" : "opacity-50"}`}>🇻🇳</span>
+                            <span className="text-dark-muted">/</span>
+                            <span className={`transition-opacity ${!isVietnamese ? "opacity-100" : "opacity-50"}`}>🇺🇸</span>
+                        </button>
+
                         {/* Theme Toggle */}
                         <button
                             onClick={toggleTheme}
@@ -86,7 +125,7 @@ export default function Header() {
                             href="/admin/login"
                             className="hidden sm:inline-flex px-4 py-2 rounded-lg text-sm font-medium bg-white/10 hover:bg-white/20 transition-colors duration-200"
                         >
-                            Admin
+                            {t("admin")}
                         </Link>
 
                         {/* Mobile Menu Button */}
@@ -108,8 +147,8 @@ export default function Header() {
             {/* Mobile Menu */}
             <div
                 className={`md:hidden absolute top-full left-0 right-0 bg-dark-bg/95 backdrop-blur-lg border-b border-dark-border transition-all duration-300 ${isMobileMenuOpen
-                        ? "opacity-100 translate-y-0"
-                        : "opacity-0 -translate-y-4 pointer-events-none"
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 -translate-y-4 pointer-events-none"
                     }`}
             >
                 <nav className="flex flex-col p-4 gap-1">
@@ -128,7 +167,7 @@ export default function Header() {
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="px-4 py-3 rounded-lg text-sm font-medium bg-white/10 hover:bg-white/20 transition-colors duration-200 text-center mt-2"
                     >
-                        Admin Panel
+                        {t("admin")}
                     </Link>
                 </nav>
             </div>

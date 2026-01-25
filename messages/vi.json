@@ -1,0 +1,209 @@
+{
+    "nav": {
+        "home": "Trang chủ",
+        "about": "Giới thiệu",
+        "projects": "Dự án",
+        "blog": "Blog",
+        "services": "Dịch vụ",
+        "cv": "CV",
+        "contact": "Liên hệ",
+        "admin": "Quản trị"
+    },
+    "profile": {
+        "bio": "Chào các bạn! Ở đây mình sẽ chia sẻ kinh nghiệm học IT, bí kíp được điểm cao trong 4 năm đại học, một số tool hữu ích và project cá nhân để các bạn tham khảo. Đặc biệt cho sinh viên UIT!"
+    },
+    "hero": {
+        "badge": "Sẵn sàng nhận freelance",
+        "greeting": "Xin chào, tôi là",
+        "roles": [
+            "Lập trình viên Full Stack",
+            "Thiết kế UI/UX",
+            "Giải quyết vấn đề",
+            "Đam mê công nghệ"
+        ],
+        "cta": {
+            "viewProjects": "Xem dự án",
+            "downloadCV": "Tải CV",
+            "contactMe": "Liên hệ"
+        }
+    },
+    "sections": {
+        "whatIDo": {
+            "title": "Tôi",
+            "titleHighlight": "làm gì",
+            "description": "Tôi chuyên xây dựng ứng dụng web hiện đại và tạo trải nghiệm người dùng tuyệt vời."
+        },
+        "featuredProjects": {
+            "title": "Dự án",
+            "titleHighlight": "nổi bật",
+            "description": "Một số công việc gần đây mà tôi tự hào.",
+            "viewAll": "Xem tất cả"
+        },
+        "cta": {
+            "title": "Hãy cùng xây dựng điều gì đó",
+            "titleHighlight": "tuyệt vời",
+            "titleEnd": "cùng nhau",
+            "description": "Có ý tưởng dự án? Tôi rất muốn nghe. Hãy thảo luận cách chúng ta có thể hợp tác để biến ý tưởng của bạn thành hiện thực.",
+            "getInTouch": "Liên hệ ngay",
+            "viewServices": "Xem dịch vụ"
+        }
+    },
+    "services": {
+        "webDev": {
+            "title": "Phát triển Web",
+            "description": "Xây dựng ứng dụng web nhanh, có khả năng mở rộng với các công nghệ hiện đại như React, Next.js và Node.js."
+        },
+        "uiux": {
+            "title": "Thiết kế UI/UX",
+            "description": "Tạo giao diện đẹp, trực quan mà người dùng yêu thích. Tập trung vào khả năng tiếp cận và trải nghiệm người dùng."
+        },
+        "productLaunch": {
+            "title": "Ra mắt sản phẩm",
+            "description": "Từ ý tưởng đến triển khai. Tôi giúp đưa sản phẩm của bạn ra thị trường với các phương pháp tốt nhất."
+        }
+    },
+    "about": {
+        "title": "Về tôi",
+        "subtitle": "Tôi là",
+        "description1": "Tôi là một lập trình viên đam mê với niềm yêu thích tạo ra các trải nghiệm số đẹp và chức năng. Với chuyên môn trong công nghệ web hiện đại, tôi giúp doanh nghiệp và cá nhân hiện thực hóa ý tưởng của họ.",
+        "description2": "Khi không lập trình, bạn có thể tìm thấy tôi đang khám phá công nghệ mới, đóng góp cho các dự án mã nguồn mở, hoặc chia sẻ kiến thức qua các bài viết blog.",
+        "experience": "Năm kinh nghiệm",
+        "available": "Sẵn sàng nhận việc"
+    },
+    "skills": {
+        "title": "Kỹ năng",
+        "titleHighlight": "của tôi",
+        "description": "Các công nghệ và công cụ tôi sử dụng để xây dựng sản phẩm tuyệt vời."
+    },
+    "timeline": {
+        "title": "Hành trình",
+        "titleHighlight": "của tôi",
+        "description": "Học vấn, kinh nghiệm làm việc và các thành tựu quan trọng."
+    },
+    "projects": {
+        "title": "Dự án",
+        "titleHighlight": "của tôi",
+        "description": "Bộ sưu tập các dự án tôi đã làm, từ ứng dụng web đến công cụ và mẫu.",
+        "searchPlaceholder": "Tìm kiếm dự án...",
+        "filters": {
+            "all": "Tất cả",
+            "free": "Miễn phí",
+            "paid": "Trả phí"
+        },
+        "noResults": "Không tìm thấy dự án phù hợp.",
+        "clearFilters": "Xóa bộ lọc",
+        "viewDetails": "Xem chi tiết"
+    },
+    "blog": {
+        "title": "Kho",
+        "titleHighlight": "kiến thức",
+        "description": "Bài viết, hướng dẫn và thông tin về phát triển web, thiết kế và công nghệ.",
+        "searchPlaceholder": "Tìm kiếm bài viết...",
+        "featured": "Bài viết nổi bật",
+        "recent": "Bài viết gần đây",
+        "readMore": "Đọc thêm"
+    },
+    "servicesPage": {
+        "title": "Dịch vụ",
+        "titleHighlight": "của tôi",
+        "description": "Dịch vụ phát triển web và thiết kế chuyên nghiệp để giúp bạn xây dựng sự hiện diện trực tuyến.",
+        "whyWorkWithMe": {
+            "title": "Tại sao",
+            "titleHighlight": "chọn tôi",
+            "description": "Tôi mang đến sự chuyên nghiệp, sáng tạo và chuyên môn kỹ thuật cho mọi dự án."
+        },
+        "benefits": {
+            "communication": {
+                "title": "Giao tiếp rõ ràng",
+                "description": "Cập nhật thường xuyên và quy trình minh bạch trong suốt dự án."
+            },
+            "delivery": {
+                "title": "Giao hàng đúng hạn",
+                "description": "Cam kết đáp ứng deadline mà không ảnh hưởng chất lượng."
+            },
+            "quality": {
+                "title": "Đảm bảo chất lượng",
+                "description": "Kiểm thử nghiêm ngặt và chú ý đến từng chi tiết."
+            },
+            "support": {
+                "title": "Hỗ trợ liên tục",
+                "description": "Hỗ trợ sau ra mắt và các tùy chọn bảo trì."
+            }
+        },
+        "cta": {
+            "title": "Sẵn sàng bắt đầu dự án?",
+            "description": "Hãy thảo luận yêu cầu của bạn và tìm giải pháp tốt nhất.",
+            "button": "Nhận báo giá miễn phí"
+        }
+    },
+    "cvPage": {
+        "title": "CV",
+        "titleHighlight": "của tôi",
+        "description": "Xem hồ sơ của tôi và tải xuống dạng PDF. Cũng xem các mẫu CV của tôi.",
+        "resume": "Hồ sơ của tôi",
+        "updated": "Cập nhật tháng 1/2024",
+        "downloadCV": "Tải CV",
+        "quickSummary": "Tóm tắt nhanh",
+        "contactInfo": "Thông tin liên hệ",
+        "getInTouch": "Liên hệ",
+        "templates": {
+            "title": "Mẫu",
+            "titleHighlight": "CV",
+            "description": "Cần CV chuyên nghiệp? Xem các mẫu được thiết kế cho lập trình viên và nhà thiết kế.",
+            "preview": "Xem mẫu"
+        }
+    },
+    "contact": {
+        "title": "Liên",
+        "titleHighlight": "hệ",
+        "description": "Có ý tưởng dự án hoặc muốn hợp tác? Tôi rất muốn nghe từ bạn.",
+        "form": {
+            "name": "Họ tên",
+            "namePlaceholder": "Tên của bạn",
+            "email": "Email",
+            "emailPlaceholder": "email@example.com",
+            "subject": "Chủ đề",
+            "subjectPlaceholder": "Bạn muốn hỏi về gì?",
+            "message": "Tin nhắn",
+            "messagePlaceholder": "Kể cho tôi về dự án của bạn...",
+            "send": "Gửi tin nhắn",
+            "sending": "Đang gửi..."
+        },
+        "success": {
+            "title": "Đã gửi tin nhắn!",
+            "description": "Cảm ơn bạn đã liên hệ. Tôi sẽ phản hồi sớm nhất có thể.",
+            "sendAnother": "Gửi tin nhắn khác"
+        },
+        "info": {
+            "title": "Thông tin liên hệ",
+            "email": "Email",
+            "location": "Địa điểm",
+            "availability": "Thời gian làm việc",
+            "hours": "T2 - T6, 9:00 - 18:00"
+        },
+        "social": {
+            "title": "Kết nối mạng xã hội"
+        },
+        "quickResponse": {
+            "title": "Phản hồi nhanh",
+            "description": "Tôi thường phản hồi trong vòng 24 giờ. Với vấn đề gấp, hãy liên hệ qua mạng xã hội."
+        }
+    },
+    "footer": {
+        "description": "Lập trình viên & Nhà thiết kế đam mê tạo ra các trải nghiệm số đẹp và chức năng. Hãy cùng xây dựng điều tuyệt vời.",
+        "quickLinks": "Liên kết nhanh",
+        "getInTouch": "Liên hệ",
+        "ctaDescription": "Có ý tưởng dự án? Hãy hợp tác và biến ý tưởng của bạn thành hiện thực.",
+        "contactMe": "Liên hệ tôi",
+        "madeWith": "Được tạo với",
+        "in": "tại Việt Nam",
+        "builtWith": "Xây dựng với Next.js, TailwindCSS & Supabase"
+    },
+    "common": {
+        "loading": "Đang tải...",
+        "error": "Đã xảy ra lỗi",
+        "back": "Quay lại",
+        "viewAll": "Xem tất cả",
+        "learnMore": "Tìm hiểu thêm"
+    }
+}

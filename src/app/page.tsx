@@ -1,11 +1,14 @@
+"use client";
+
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, Download, Sparkles, Code2, Palette, Rocket } from "lucide-react";
+import { useTranslations } from "next-intl";
 import TypingEffect from "@/components/ui/TypingEffect";
 import ProjectCard from "@/components/ui/ProjectCard";
 import { projects, profileData } from "@/lib/mockData";
 
 export default function HomePage() {
+    const t = useTranslations();
     const featuredProjects = projects.slice(0, 3);
 
     return (
@@ -23,12 +26,12 @@ export default function HomePage() {
                         {/* Badge */}
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 animate-fade-in">
                             <Sparkles className="w-4 h-4 text-amber-400" />
-                            <span className="text-sm text-dark-text/80">Available for freelance work</span>
+                            <span className="text-sm text-dark-text/80">{t("hero.badge")}</span>
                         </div>
 
                         {/* Headline */}
                         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-slide-up">
-                            Hi, I&apos;m{" "}
+                            Hi, Here&apos;s{" "}
                             <span className="gradient-text">{profileData.name}</span>
                             <br />
                             <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
@@ -47,24 +50,24 @@ export default function HomePage() {
 
                         {/* Subtitle */}
                         <p className="text-lg md:text-xl text-dark-muted max-w-2xl mx-auto mb-10 animate-slide-up animate-delay-200">
-                            {profileData.bio}
+                            {t("profile.bio")}
                         </p>
 
                         {/* CTAs */}
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up animate-delay-300">
                             <Link href="/projects" className="btn-glow flex items-center gap-2">
-                                View Projects
+                                {t("hero.cta.viewProjects")}
                                 <ArrowRight className="w-4 h-4" />
                             </Link>
                             <Link href="/cv" className="btn-outline flex items-center gap-2">
                                 <Download className="w-4 h-4" />
-                                Download CV
+                                {t("hero.cta.downloadCV")}
                             </Link>
                             <Link
                                 href="/contact"
                                 className="px-6 py-3 text-dark-text/80 hover:text-white transition-colors"
                             >
-                                Contact Me →
+                                {t("hero.cta.contactMe")} →
                             </Link>
                         </div>
                     </div>
@@ -82,10 +85,10 @@ export default function HomePage() {
             <section className="section-container">
                 <div className="text-center mb-12">
                     <h2 className="section-title">
-                        What I <span className="gradient-text">Do</span>
+                        {t("sections.whatIDo.title")} <span className="gradient-text">{t("sections.whatIDo.titleHighlight")}</span>
                     </h2>
                     <p className="text-dark-muted max-w-2xl mx-auto">
-                        I specialize in building modern web applications and creating beautiful user experiences.
+                        {t("sections.whatIDo.description")}
                     </p>
                 </div>
 
@@ -95,9 +98,9 @@ export default function HomePage() {
                         <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary-500 to-cyan-500 flex items-center justify-center shadow-glow-sm group-hover:shadow-glow-md transition-shadow">
                             <Code2 className="w-8 h-8 text-white" />
                         </div>
-                        <h3 className="text-xl font-semibold mb-2">Web Development</h3>
+                        <h3 className="text-xl font-semibold mb-2">{t("services.webDev.title")}</h3>
                         <p className="text-sm text-dark-muted">
-                            Building fast, scalable web applications with modern technologies like React, Next.js, and Node.js.
+                            {t("services.webDev.description")}
                         </p>
                     </div>
 
@@ -106,9 +109,9 @@ export default function HomePage() {
                         <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-accent-purple to-pink-500 flex items-center justify-center shadow-glow-sm group-hover:shadow-glow-lg transition-shadow">
                             <Palette className="w-8 h-8 text-white" />
                         </div>
-                        <h3 className="text-xl font-semibold mb-2">UI/UX Design</h3>
+                        <h3 className="text-xl font-semibold mb-2">{t("services.uiux.title")}</h3>
                         <p className="text-sm text-dark-muted">
-                            Crafting intuitive, beautiful interfaces that users love. Focus on accessibility and user experience.
+                            {t("services.uiux.description")}
                         </p>
                     </div>
 
@@ -117,9 +120,9 @@ export default function HomePage() {
                         <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-glow-sm group-hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] transition-shadow">
                             <Rocket className="w-8 h-8 text-white" />
                         </div>
-                        <h3 className="text-xl font-semibold mb-2">Product Launch</h3>
+                        <h3 className="text-xl font-semibold mb-2">{t("services.productLaunch.title")}</h3>
                         <p className="text-sm text-dark-muted">
-                            From idea to deployment. I help bring your products to market with best practices and optimization.
+                            {t("services.productLaunch.description")}
                         </p>
                     </div>
                 </div>
@@ -130,17 +133,17 @@ export default function HomePage() {
                 <div className="flex items-end justify-between mb-12">
                     <div>
                         <h2 className="section-title text-left mb-2">
-                            Featured <span className="gradient-text">Projects</span>
+                            {t("sections.featuredProjects.title")} <span className="gradient-text">{t("sections.featuredProjects.titleHighlight")}</span>
                         </h2>
                         <p className="text-dark-muted">
-                            Some of my recent work that I&apos;m proud of.
+                            {t("sections.featuredProjects.description")}
                         </p>
                     </div>
                     <Link
                         href="/projects"
                         className="hidden sm:flex items-center gap-2 text-primary-400 hover:text-primary-300 transition-colors"
                     >
-                        View All
+                        {t("sections.featuredProjects.viewAll")}
                         <ArrowRight className="w-4 h-4" />
                     </Link>
                 </div>
@@ -153,7 +156,7 @@ export default function HomePage() {
 
                 <div className="mt-8 text-center sm:hidden">
                     <Link href="/projects" className="btn-outline inline-flex items-center gap-2">
-                        View All Projects
+                        {t("sections.featuredProjects.viewAll")}
                         <ArrowRight className="w-4 h-4" />
                     </Link>
                 </div>
@@ -168,19 +171,20 @@ export default function HomePage() {
 
                     <div className="relative z-10 max-w-2xl">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                            Let&apos;s Build Something{" "}
-                            <span className="gradient-text">Amazing</span> Together
+                            {t("sections.cta.title")}{" "}
+                            <span className="gradient-text">{t("sections.cta.titleHighlight")}</span>{" "}
+                            {t("sections.cta.titleEnd")}
                         </h2>
                         <p className="text-dark-muted mb-8">
-                            Have a project in mind? I&apos;d love to hear about it. Let&apos;s discuss how we can work together to bring your ideas to life.
+                            {t("sections.cta.description")}
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Link href="/contact" className="btn-glow inline-flex items-center justify-center gap-2">
-                                Get in Touch
+                                {t("sections.cta.getInTouch")}
                                 <ArrowRight className="w-4 h-4" />
                             </Link>
                             <Link href="/services" className="btn-outline inline-flex items-center justify-center gap-2">
-                                View Services
+                                {t("sections.cta.viewServices")}
                             </Link>
                         </div>
                     </div>

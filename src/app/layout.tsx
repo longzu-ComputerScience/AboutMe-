@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 
 const inter = Inter({
     subsets: ["latin", "vietnamese"],
@@ -31,27 +33,32 @@ export const metadata: Metadata = {
     },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const locale = await getLocale();
+    const messages = await getMessages();
+
     return (
-        <html lang="vi" className="dark">
+        <html lang={locale} className="dark">
             <body className={`${inter.variable} antialiased min-h-screen flex flex-col`}>
-                {/* Animated Background */}
-                <div className="animated-bg" />
+                <NextIntlClientProvider messages={messages}>
+                    {/* Animated Background */}
+                    <div className="animated-bg" />
 
-                {/* Header */}
-                <Header />
+                    {/* Header */}
+                    <Header />
 
-                {/* Main Content */}
-                <main className="flex-1 pt-[var(--header-height)]">
-                    {children}
-                </main>
+                    {/* Main Content */}
+                    <main className="flex-1 pt-[var(--header-height)]">
+                        {children}
+                    </main>
 
-                {/* Footer */}
-                <Footer />
+                    {/* Footer */}
+                    <Footer />
+                </NextIntlClientProvider>
             </body>
         </html>
     );

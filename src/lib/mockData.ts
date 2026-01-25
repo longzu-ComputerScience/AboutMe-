@@ -3,7 +3,7 @@
 export const profileData = {
     name: "LongZu",
     title: "Full Stack Developer & Designer",
-    bio: "Passionate developer with expertise in building modern web applications. I love creating beautiful, functional digital experiences that solve real problems.",
+    bio: "Chào các bạn! Ở đây mình sẽ chia sẻ cho các bạn kinh nghiệm học IT, bí kíp được điểm cao, một số tool hữu ích và project cá nhân để các bạn tham khảo. Đặc biệt cho sinh viên UIT!",
     avatar: "/avatar.jpg",
     location: "Vietnam",
     email: "contact@longzu.dev",

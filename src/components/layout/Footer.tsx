@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Github, Linkedin, Facebook, Mail, Heart, ArrowUp } from "lucide-react";
 
 const socialLinks = [
@@ -10,17 +11,19 @@ const socialLinks = [
     { href: "mailto:contact@longzu.dev", icon: Mail, label: "Email" },
 ];
 
-const quickLinks = [
-    { href: "/about", label: "About" },
-    { href: "/projects", label: "Projects" },
-    { href: "/blog", label: "Blog" },
-    { href: "/services", label: "Services" },
-    { href: "/cv", label: "CV" },
-    { href: "/contact", label: "Contact" },
-];
-
 export default function Footer() {
+    const t = useTranslations("footer");
+    const tNav = useTranslations("nav");
     const currentYear = new Date().getFullYear();
+
+    const quickLinks = [
+        { href: "/about", label: tNav("about") },
+        { href: "/projects", label: tNav("projects") },
+        { href: "/blog", label: tNav("blog") },
+        { href: "/services", label: tNav("services") },
+        { href: "/cv", label: tNav("cv") },
+        { href: "/contact", label: tNav("contact") },
+    ];
 
     return (
         <footer className="relative border-t border-dark-border bg-dark-bg/50 backdrop-blur-sm">
@@ -39,8 +42,7 @@ export default function Footer() {
                     <div className="space-y-4">
                         <h3 className="text-xl font-bold gradient-text">LongZu</h3>
                         <p className="text-dark-muted text-sm leading-relaxed">
-                            Developer & Designer passionate about creating beautiful,
-                            functional digital experiences. Let&apos;s build something amazing together.
+                            {t("description")}
                         </p>
                         {/* Social Links */}
                         <div className="flex gap-3">
@@ -62,7 +64,7 @@ export default function Footer() {
                     {/* Quick Links */}
                     <div className="space-y-4">
                         <h4 className="text-sm font-semibold uppercase tracking-wider text-dark-muted">
-                            Quick Links
+                            {t("quickLinks")}
                         </h4>
                         <nav className="grid grid-cols-2 gap-2">
                             {quickLinks.map((link) => (
@@ -80,17 +82,17 @@ export default function Footer() {
                     {/* Newsletter / CTA */}
                     <div className="space-y-4">
                         <h4 className="text-sm font-semibold uppercase tracking-wider text-dark-muted">
-                            Get in Touch
+                            {t("getInTouch")}
                         </h4>
                         <p className="text-sm text-dark-text/70">
-                            Have a project in mind? Let&apos;s collaborate and bring your ideas to life.
+                            {t("ctaDescription")}
                         </p>
                         <Link
                             href="/contact"
                             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-primary-500 to-accent-purple text-white text-sm font-medium hover:shadow-glow-sm transition-all duration-300"
                         >
                             <Mail className="w-4 h-4" />
-                            Contact Me
+                            {t("contactMe")}
                         </Link>
                     </div>
                 </div>
@@ -98,12 +100,12 @@ export default function Footer() {
                 {/* Bottom Bar */}
                 <div className="mt-12 pt-6 border-t border-dark-border flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-sm text-dark-muted flex items-center gap-1">
-                        © {currentYear} LongZu. Made with
+                        © {currentYear} LongZu. {t("madeWith")}
                         <Heart className="w-4 h-4 text-red-500 fill-red-500" />
-                        in Vietnam
+                        {t("in")}
                     </p>
                     <p className="text-xs text-dark-muted">
-                        Built with Next.js, TailwindCSS & Supabase
+                        {t("builtWith")}
                     </p>
                 </div>
             </div>
