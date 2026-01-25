@@ -1,15 +1,71 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, Download, Sparkles, Code2, Palette, Rocket } from "lucide-react";
 import { useTranslations } from "next-intl";
 import TypingEffect from "@/components/ui/TypingEffect";
 import ProjectCard from "@/components/ui/ProjectCard";
-import { projects, profileData } from "@/lib/mockData";
+import { profileData } from "@/lib/mockData";
+import { supabase } from "@/lib/supabase";
+
+interface Project {
+    id: string;
+    title: string;
+    title_vi: string | null;
+    slug: string;
+    description: string;
+    description_vi: string | null;
+    image_url: string | null;
+    tags: string[] | null;
+    demo_url: string | null;
+    source_url: string | null;
+    is_paid: boolean;
+    category: string;
+    is_featured: boolean;
+}
 
 export default function HomePage() {
     const t = useTranslations();
-    const featuredProjects = projects.slice(0, 3);
+    const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
+    const [isVietnamese, setIsVietnamese] = useState(true);
+
+    useEffect(() => {
+        // Fetch featured projects from Supabase
+        const fetchProjects = async () => {
+            const { data } = await supabase
+                .from("projects")
+                .select("*")
+                .eq("is_published", true)
+                .eq("is_featured", true)
+                .order("created_at", { ascending: false })
+                .limit(3);
+
+            if (data) {
+                setFeaturedProjects(data);
+            }
+        };
+
+        // Check locale
+        const checkLocale = async () => {
+            try {
+                const response = await fetch("/api/locale");
+                const data = await response.json();
+                setIsVietnamese(data.locale === "vi");
+            } catch {
+                setIsVietnamese(true);
+            }
+        };
+
+        fetchProjects();
+        checkLocale();
+    }, []);
+
+    // Get localized title and description
+    const getLocalizedProject = (project: Project) => ({
+        title: isVietnamese && project.title_vi ? project.title_vi : project.title,
+        description: isVietnamese && project.description_vi ? project.description_vi : project.description,
+    });
 
     return (
         <>
@@ -49,24 +105,52 @@ export default function HomePage() {
                         </h1>
 
                         {/* Subtitle */}
-                        <p className="text-lg md:text-xl text-dark-muted max-w-2xl mx-auto mb-10 animate-slide-up animate-delay-200">
+                        <p className="text-lg md:text-xl text-dark-muted max-w-2xl mx-auto mb-10 animate-slide-up animate-delay-200 whitespace-pre-line">
                             {t("profile.bio")}
                         </p>
 
-                        {/* CTAs */}
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up animate-delay-300">
-                            <Link href="/projects" className="btn-glow flex items-center gap-2">
-                                {t("hero.cta.viewProjects")}
-                                <ArrowRight className="w-4 h-4" />
+                        {/* Audience CTAs - 2 Target Groups */}
+                        <div className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto animate-slide-up animate-delay-300">
+                            {/* Student CTA */}
+                            <Link
+                                href="/blog"
+                                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 p-6 hover:border-emerald-500/40 transition-all duration-300 hover:scale-[1.02]"
+                            >
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all" />
+                                <div className="relative z-10">
+                                    <div className="text-3xl mb-2">{t("hero.audience.student.title")}</div>
+                                    <p className="text-sm text-dark-muted mb-3">{t("hero.audience.student.subtitle")}</p>
+                                    <span className="inline-flex items-center gap-1 text-emerald-400 text-sm font-medium group-hover:gap-2 transition-all">
+                                        {t("hero.audience.student.cta")}
+                                        <ArrowRight className="w-4 h-4" />
+                                    </span>
+                                </div>
                             </Link>
-                            <Link href="/cv" className="btn-outline flex items-center gap-2">
+
+                            {/* Business CTA */}
+                            <Link
+                                href="/services"
+                                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500/10 to-accent-purple/10 border border-primary-500/20 p-6 hover:border-primary-500/40 transition-all duration-300 hover:scale-[1.02]"
+                            >
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full blur-2xl group-hover:bg-primary-500/20 transition-all" />
+                                <div className="relative z-10">
+                                    <div className="text-3xl mb-2">{t("hero.audience.business.title")}</div>
+                                    <p className="text-sm text-dark-muted mb-3">{t("hero.audience.business.subtitle")}</p>
+                                    <span className="inline-flex items-center gap-1 text-primary-400 text-sm font-medium group-hover:gap-2 transition-all">
+                                        {t("hero.audience.business.cta")}
+                                        <ArrowRight className="w-4 h-4" />
+                                    </span>
+                                </div>
+                            </Link>
+                        </div>
+
+                        {/* Secondary CTAs */}
+                        <div className="flex items-center justify-center gap-6 mt-6 animate-slide-up animate-delay-400">
+                            <Link href="/cv" className="text-sm text-dark-muted hover:text-white transition-colors flex items-center gap-1">
                                 <Download className="w-4 h-4" />
                                 {t("hero.cta.downloadCV")}
                             </Link>
-                            <Link
-                                href="/contact"
-                                className="px-6 py-3 text-dark-text/80 hover:text-white transition-colors"
-                            >
+                            <Link href="/contact" className="text-sm text-dark-muted hover:text-white transition-colors">
                                 {t("hero.cta.contactMe")} →
                             </Link>
                         </div>
@@ -149,9 +233,23 @@ export default function HomePage() {
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {featuredProjects.map((project) => (
-                        <ProjectCard key={project.id} {...project} />
-                    ))}
+                    {featuredProjects.map((project) => {
+                        const localized = getLocalizedProject(project);
+                        return (
+                            <ProjectCard
+                                key={project.id}
+                                title={localized.title}
+                                slug={project.slug}
+                                description={localized.description}
+                                image={project.image_url || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80"}
+                                tags={project.tags || []}
+                                demoUrl={project.demo_url || undefined}
+                                sourceUrl={project.source_url || undefined}
+                                isPaid={project.is_paid}
+                                category={project.category}
+                            />
+                        );
+                    })}
                 </div>
 
                 <div className="mt-8 text-center sm:hidden">

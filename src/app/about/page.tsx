@@ -1,16 +1,75 @@
-import { Metadata } from "next";
+"use client";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { MapPin, Mail, Calendar } from "lucide-react";
+import { useTranslations } from "next-intl";
 import SkillBadge from "@/components/ui/SkillBadge";
 import Timeline from "@/components/ui/Timeline";
 import { profileData, skills, timeline } from "@/lib/mockData";
+import { supabase } from "@/lib/supabase";
 
-export const metadata: Metadata = {
-    title: "About | LongZu",
-    description: "Learn more about LongZu - Full Stack Developer & Designer based in Vietnam.",
-};
+interface Profile {
+    id: string;
+    name: string;
+    name_vi: string | null;
+    title: string;
+    title_vi: string | null;
+    bio: string | null;
+    bio_vi: string | null;
+    avatar_url: string | null;
+    location: string | null;
+    email: string | null;
+    is_available_for_hire: boolean;
+}
 
 export default function AboutPage() {
+    const t = useTranslations();
+    const [profile, setProfile] = useState<Profile | null>(null);
+    const [isVietnamese, setIsVietnamese] = useState(true);
+
+    useEffect(() => {
+        const init = async () => {
+            // Check locale
+            try {
+                const response = await fetch("/api/locale");
+                const data = await response.json();
+                setIsVietnamese(data.locale === "vi");
+            } catch {
+                setIsVietnamese(true);
+            }
+
+            // Fetch profile from Supabase
+            const { data } = await supabase
+                .from("profiles")
+                .select("*")
+                .limit(1)
+                .single();
+
+            if (data) {
+                setProfile(data);
+            }
+        };
+        init();
+    }, []);
+
+    // Use Supabase data if available, fallback to mockData
+    const displayName = profile
+        ? (isVietnamese && profile.name_vi ? profile.name_vi : profile.name)
+        : profileData.name;
+
+    const displayTitle = profile
+        ? (isVietnamese && profile.title_vi ? profile.title_vi : profile.title)
+        : profileData.title;
+
+    const displayBio = profile
+        ? (isVietnamese && profile.bio_vi ? profile.bio_vi : profile.bio)
+        : profileData.bio;
+
+    const displayLocation = profile?.location || profileData.location;
+    const displayEmail = profile?.email || profileData.email;
+    const isAvailable = profile?.is_available_for_hire ?? true;
+
     return (
         <>
             {/* Hero Section */}
@@ -26,8 +85,8 @@ export default function AboutPage() {
                             {/* Image container */}
                             <div className="relative w-full h-full rounded-3xl overflow-hidden border-2 border-white/10">
                                 <Image
-                                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80"
-                                    alt={profileData.name}
+                                    src={profile?.avatar_url || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80"}
+                                    alt={displayName}
                                     fill
                                     className="object-cover"
                                     priority
@@ -36,7 +95,7 @@ export default function AboutPage() {
 
                             {/* Floating badges */}
                             <div className="absolute -bottom-4 -right-4 px-4 py-2 rounded-xl bg-dark-card border border-dark-border shadow-lg">
-                                <p className="text-sm font-medium gradient-text">5+ Years Experience</p>
+                                <p className="text-sm font-medium gradient-text">5+ {t("about.yearsExperience")}</p>
                             </div>
                         </div>
                     </div>
@@ -44,37 +103,35 @@ export default function AboutPage() {
                     {/* Content */}
                     <div className="space-y-6">
                         <div>
-                            <p className="text-primary-400 font-medium mb-2">About Me</p>
+                            <p className="text-primary-400 font-medium mb-2">{t("about.title")}</p>
                             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                                I&apos;m <span className="gradient-text">{profileData.name}</span>
+                                {t("about.subtitle")} <span className="gradient-text">{displayName}</span>
                             </h1>
-                            <p className="text-xl text-dark-muted">{profileData.title}</p>
+                            <p className="text-xl text-dark-muted">{displayTitle}</p>
                         </div>
 
-                        <p className="text-dark-text/80 leading-relaxed">
-                            I&apos;m a passionate developer with a love for creating beautiful, functional digital experiences.
-                            With expertise in modern web technologies, I help businesses and individuals bring their ideas to life.
-                        </p>
-
-                        <p className="text-dark-text/80 leading-relaxed">
-                            When I&apos;m not coding, you can find me exploring new technologies, contributing to open-source projects,
-                            or sharing knowledge through blog posts and tutorials.
-                        </p>
+                        {displayBio && (
+                            <p className="text-dark-text/80 leading-relaxed whitespace-pre-line">
+                                {displayBio}
+                            </p>
+                        )}
 
                         {/* Quick Info */}
                         <div className="flex flex-wrap gap-4 pt-4">
                             <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10">
                                 <MapPin className="w-4 h-4 text-primary-400" />
-                                <span className="text-sm">{profileData.location}</span>
+                                <span className="text-sm">{displayLocation}</span>
                             </div>
                             <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10">
                                 <Mail className="w-4 h-4 text-primary-400" />
-                                <span className="text-sm">{profileData.email}</span>
+                                <span className="text-sm">{displayEmail}</span>
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10">
-                                <Calendar className="w-4 h-4 text-primary-400" />
-                                <span className="text-sm">Available for hire</span>
-                            </div>
+                            {isAvailable && (
+                                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
+                                    <Calendar className="w-4 h-4 text-emerald-400" />
+                                    <span className="text-sm text-emerald-400">{t("about.availableForHire")}</span>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -84,10 +141,10 @@ export default function AboutPage() {
             <section className="section-container">
                 <div className="text-center mb-12">
                     <h2 className="section-title">
-                        My <span className="gradient-text">Skills</span>
+                        {t("skills.title")} <span className="gradient-text">{t("skills.titleHighlight")}</span>
                     </h2>
                     <p className="text-dark-muted max-w-2xl mx-auto">
-                        Technologies and tools I work with to build amazing products.
+                        {t("skills.description")}
                     </p>
                 </div>
 
@@ -102,10 +159,10 @@ export default function AboutPage() {
             <section className="section-container">
                 <div className="text-center mb-12">
                     <h2 className="section-title">
-                        My <span className="gradient-text">Journey</span>
+                        {t("timeline.title")} <span className="gradient-text">{t("timeline.titleHighlight")}</span>
                     </h2>
                     <p className="text-dark-muted max-w-2xl mx-auto">
-                        Education, work experience, and key achievements along the way.
+                        {t("timeline.description")}
                     </p>
                 </div>
 

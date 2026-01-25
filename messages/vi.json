@@ -10,7 +10,8 @@
         "admin": "Quản trị"
     },
     "profile": {
-        "bio": "Chào các bạn! Ở đây mình sẽ chia sẻ kinh nghiệm học IT, bí kíp được điểm cao trong 4 năm đại học, một số tool hữu ích và project cá nhân để các bạn tham khảo. Đặc biệt cho sinh viên UIT!"
+        "bio": "Chào các bạn! Ở đây mình sẽ chia sẻ kinh nghiệm học IT, bí kíp được điểm cao, một số tool hữu ích và project cá nhân để các bạn tham khảo. Đặc biệt cho sinh viên UIT!\n Đồng thời nhận thiết kế, vận hành website | Freelancer.",
+        "bioShort": "Sinh viên UIT đam mê công nghệ"
     },
     "hero": {
         "badge": "Sẵn sàng nhận freelance",
@@ -25,12 +26,24 @@
             "viewProjects": "Xem dự án",
             "downloadCV": "Tải CV",
             "contactMe": "Liên hệ"
+        },
+        "audience": {
+            "student": {
+                "title": "🎓 Sinh viên",
+                "subtitle": "Mẹo học IT, Tool, Project",
+                "cta": "Khám phá ngay"
+            },
+            "business": {
+                "title": "💼 FreeLance",
+                "subtitle": "Thuê thiết kế, Hợp tác",
+                "cta": "Xem dịch vụ"
+            }
         }
     },
     "sections": {
         "whatIDo": {
             "title": "Tôi",
-            "titleHighlight": "làm gì",
+            "titleHighlight": "có thể làm gì",
             "description": "Tôi chuyên xây dựng ứng dụng web hiện đại và tạo trải nghiệm người dùng tuyệt vời."
         },
         "featuredProjects": {
@@ -48,6 +61,19 @@
             "viewServices": "Xem dịch vụ"
         }
     },
+    "projects": {
+        "title": "Dự án",
+        "titleHighlight": "của tôi",
+        "description": "Tổng hợp các dự án tôi đã thực hiện, từ ứng dụng web đến công cụ và template.",
+        "searchPlaceholder": "Tìm kiếm dự án...",
+        "filters": {
+            "all": "Tất cả",
+            "free": "Miễn phí",
+            "paid": "Trả phí"
+        },
+        "noResults": "Không tìm thấy dự án phù hợp.",
+        "clearFilters": "Xóa bộ lọc"
+    },
     "services": {
         "webDev": {
             "title": "Phát triển Web",
@@ -63,12 +89,14 @@
         }
     },
     "about": {
-        "title": "Về tôi",
-        "subtitle": "Tôi là",
+        "title": "About Me",
+        "subtitle": "I'm",
         "description1": "Tôi là một lập trình viên đam mê với niềm yêu thích tạo ra các trải nghiệm số đẹp và chức năng. Với chuyên môn trong công nghệ web hiện đại, tôi giúp doanh nghiệp và cá nhân hiện thực hóa ý tưởng của họ.",
         "description2": "Khi không lập trình, bạn có thể tìm thấy tôi đang khám phá công nghệ mới, đóng góp cho các dự án mã nguồn mở, hoặc chia sẻ kiến thức qua các bài viết blog.",
         "experience": "Năm kinh nghiệm",
-        "available": "Sẵn sàng nhận việc"
+        "available": "Sẵn sàng nhận việc",
+        "yearsExperience": "năm kinh nghiệm",
+        "availableForHire": "Sẵn sàng nhận việc"
     },
     "skills": {
         "title": "Kỹ năng",
@@ -79,20 +107,6 @@
         "title": "Hành trình",
         "titleHighlight": "của tôi",
         "description": "Học vấn, kinh nghiệm làm việc và các thành tựu quan trọng."
-    },
-    "projects": {
-        "title": "Dự án",
-        "titleHighlight": "của tôi",
-        "description": "Bộ sưu tập các dự án tôi đã làm, từ ứng dụng web đến công cụ và mẫu.",
-        "searchPlaceholder": "Tìm kiếm dự án...",
-        "filters": {
-            "all": "Tất cả",
-            "free": "Miễn phí",
-            "paid": "Trả phí"
-        },
-        "noResults": "Không tìm thấy dự án phù hợp.",
-        "clearFilters": "Xóa bộ lọc",
-        "viewDetails": "Xem chi tiết"
     },
     "blog": {
         "title": "Kho",

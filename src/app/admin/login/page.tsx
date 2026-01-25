@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 export default function AdminLoginPage() {
     const router = useRouter();
@@ -18,15 +19,19 @@ export default function AdminLoginPage() {
         setError("");
 
         try {
-            // TODO: Implement Supabase auth
-            // For demo, just navigate to dashboard
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const { data, error: authError } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
 
-            // Simulate login check
-            if (email === "admin@longzu.dev" && password === "admin123") {
+            if (authError) {
+                setError(authError.message);
+                return;
+            }
+
+            if (data.session) {
                 router.push("/admin/dashboard");
-            } else {
-                setError("Invalid credentials. Try admin@longzu.dev / admin123");
+                router.refresh();
             }
         } catch {
             setError("An error occurred. Please try again.");
@@ -71,7 +76,7 @@ export default function AdminLoginPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all"
-                                    placeholder="admin@longzu.dev"
+                                    placeholder="your@email.com"
                                 />
                             </div>
                         </div>
@@ -121,13 +126,6 @@ export default function AdminLoginPage() {
                             )}
                         </button>
                     </form>
-
-                    {/* Demo Credentials */}
-                    <div className="mt-6 p-4 rounded-lg bg-primary-500/10 border border-primary-500/30">
-                        <p className="text-sm text-primary-400 font-medium mb-1">Demo Credentials:</p>
-                        <p className="text-xs text-dark-muted">Email: admin@longzu.dev</p>
-                        <p className="text-xs text-dark-muted">Password: admin123</p>
-                    </div>
                 </div>
             </div>
         </div>

@@ -1,19 +1,158 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Save, Upload, User, Mail, MapPin, Briefcase } from "lucide-react";
 import { profileData, skills } from "@/lib/mockData";
+import { supabase } from "@/lib/supabase";
+
+interface Profile {
+    id: string;
+    name: string;
+    name_vi: string | null;
+    title: string;
+    title_vi: string | null;
+    bio: string | null;
+    bio_vi: string | null;
+    email: string | null;
+    location: string | null;
+    github_url: string | null;
+    linkedin_url: string | null;
+    facebook_url: string | null;
+}
 
 export default function AdminProfilePage() {
-    const [profile, setProfile] = useState(profileData);
+    const router = useRouter();
+    const [profile, setProfile] = useState({
+        id: "",
+        name: profileData.name,
+        name_vi: "",
+        title: profileData.title,
+        title_vi: "",
+        bio: profileData.bio,
+        bio_vi: "",
+        email: profileData.email,
+        location: profileData.location,
+        github_url: profileData.social.github,
+        linkedin_url: profileData.social.linkedin,
+        facebook_url: profileData.social.facebook,
+    });
     const [isSaving, setIsSaving] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState("");
+
+    // Check auth and fetch profile
+    useEffect(() => {
+        const init = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                router.push("/admin/login");
+                return;
+            }
+
+            // Fetch profile from Supabase (first one)
+            const { data, error } = await supabase
+                .from("profiles")
+                .select("*")
+                .limit(1)
+                .single();
+
+            if (!error && data) {
+                setProfile({
+                    id: data.id,
+                    name: data.name || "",
+                    name_vi: data.name_vi || "",
+                    title: data.title || "",
+                    title_vi: data.title_vi || "",
+                    bio: data.bio || "",
+                    bio_vi: data.bio_vi || "",
+                    email: data.email || "",
+                    location: data.location || "",
+                    github_url: data.github_url || "",
+                    linkedin_url: data.linkedin_url || "",
+                    facebook_url: data.facebook_url || "",
+                });
+            }
+            setIsLoading(false);
+        };
+        init();
+    }, [router]);
 
     const handleSave = async () => {
         setIsSaving(true);
-        // Simulate save
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setIsSaving(false);
+        setError("");
+
+        try {
+            if (profile.id) {
+                // Update existing profile
+                const { error: updateError } = await supabase
+                    .from("profiles")
+                    .update({
+                        name: profile.name,
+                        name_vi: profile.name_vi || null,
+                        title: profile.title,
+                        title_vi: profile.title_vi || null,
+                        bio: profile.bio || null,
+                        bio_vi: profile.bio_vi || null,
+                        email: profile.email || null,
+                        location: profile.location || null,
+                        github_url: profile.github_url || null,
+                        linkedin_url: profile.linkedin_url || null,
+                        facebook_url: profile.facebook_url || null,
+                    })
+                    .eq("id", profile.id);
+
+                if (updateError) {
+                    setError(updateError.message);
+                    return;
+                }
+            } else {
+                // Insert new profile
+                const { data, error: insertError } = await supabase
+                    .from("profiles")
+                    .insert({
+                        name: profile.name,
+                        name_vi: profile.name_vi || null,
+                        title: profile.title,
+                        title_vi: profile.title_vi || null,
+                        bio: profile.bio || null,
+                        bio_vi: profile.bio_vi || null,
+                        email: profile.email || null,
+                        location: profile.location || null,
+                        github_url: profile.github_url || null,
+                        linkedin_url: profile.linkedin_url || null,
+                        facebook_url: profile.facebook_url || null,
+                    })
+                    .select()
+                    .single();
+
+                if (insertError) {
+                    setError(insertError.message);
+                    return;
+                }
+
+                if (data) {
+                    setProfile(prev => ({ ...prev, id: data.id }));
+                }
+            }
+
+            setSuccess(true);
+            setTimeout(() => setSuccess(false), 3000);
+        } catch {
+            setError("Có lỗi xảy ra. Vui lòng thử lại!");
+        } finally {
+            setIsSaving(false);
+        }
     };
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[50vh]">
+                <div className="w-8 h-8 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -42,6 +181,20 @@ export default function AdminProfilePage() {
                 </button>
             </div>
 
+            {/* Success Message */}
+            {success && (
+                <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                    Profile saved successfully!
+                </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+                <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400">
+                    {error}
+                </div>
+            )}
+
             <div className="grid lg:grid-cols-3 gap-6">
                 {/* Avatar Section */}
                 <div className="bg-dark-card border border-dark-border rounded-2xl p-6">
@@ -67,7 +220,7 @@ export default function AdminProfilePage() {
                         <div>
                             <label className="block text-sm font-medium mb-2">
                                 <User className="w-4 h-4 inline mr-2" />
-                                Name
+                                Name (English)
                             </label>
                             <input
                                 type="text"
@@ -78,13 +231,37 @@ export default function AdminProfilePage() {
                         </div>
                         <div>
                             <label className="block text-sm font-medium mb-2">
+                                <User className="w-4 h-4 inline mr-2" />
+                                Name (Vietnamese)
+                            </label>
+                            <input
+                                type="text"
+                                value={profile.name_vi}
+                                onChange={(e) => setProfile({ ...profile, name_vi: e.target.value })}
+                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-2">
                                 <Briefcase className="w-4 h-4 inline mr-2" />
-                                Title
+                                Title (English)
                             </label>
                             <input
                                 type="text"
                                 value={profile.title}
                                 onChange={(e) => setProfile({ ...profile, title: e.target.value })}
+                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-2">
+                                <Briefcase className="w-4 h-4 inline mr-2" />
+                                Title (Vietnamese)
+                            </label>
+                            <input
+                                type="text"
+                                value={profile.title_vi}
+                                onChange={(e) => setProfile({ ...profile, title_vi: e.target.value })}
                                 className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
                             />
                         </div>
@@ -113,11 +290,20 @@ export default function AdminProfilePage() {
                             />
                         </div>
                         <div className="sm:col-span-2">
-                            <label className="block text-sm font-medium mb-2">Bio</label>
+                            <label className="block text-sm font-medium mb-2">Bio (English)</label>
                             <textarea
                                 value={profile.bio}
                                 onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-                                rows={4}
+                                rows={3}
+                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all resize-none"
+                            />
+                        </div>
+                        <div className="sm:col-span-2">
+                            <label className="block text-sm font-medium mb-2">Bio (Vietnamese)</label>
+                            <textarea
+                                value={profile.bio_vi}
+                                onChange={(e) => setProfile({ ...profile, bio_vi: e.target.value })}
+                                rows={3}
                                 className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all resize-none"
                             />
                         </div>
@@ -157,13 +343,8 @@ export default function AdminProfilePage() {
                         <label className="block text-sm font-medium mb-2">GitHub</label>
                         <input
                             type="url"
-                            value={profile.social.github}
-                            onChange={(e) =>
-                                setProfile({
-                                    ...profile,
-                                    social: { ...profile.social, github: e.target.value },
-                                })
-                            }
+                            value={profile.github_url}
+                            onChange={(e) => setProfile({ ...profile, github_url: e.target.value })}
                             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
                         />
                     </div>
@@ -171,13 +352,8 @@ export default function AdminProfilePage() {
                         <label className="block text-sm font-medium mb-2">LinkedIn</label>
                         <input
                             type="url"
-                            value={profile.social.linkedin}
-                            onChange={(e) =>
-                                setProfile({
-                                    ...profile,
-                                    social: { ...profile.social, linkedin: e.target.value },
-                                })
-                            }
+                            value={profile.linkedin_url}
+                            onChange={(e) => setProfile({ ...profile, linkedin_url: e.target.value })}
                             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
                         />
                     </div>
@@ -185,13 +361,8 @@ export default function AdminProfilePage() {
                         <label className="block text-sm font-medium mb-2">Facebook</label>
                         <input
                             type="url"
-                            value={profile.social.facebook}
-                            onChange={(e) =>
-                                setProfile({
-                                    ...profile,
-                                    social: { ...profile.social, facebook: e.target.value },
-                                })
-                            }
+                            value={profile.facebook_url}
+                            onChange={(e) => setProfile({ ...profile, facebook_url: e.target.value })}
                             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
                         />
                     </div>

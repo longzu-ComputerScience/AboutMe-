@@ -2,19 +2,23 @@
 
 import { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Menu, X, Moon, Sun, Code2 } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
+import { Menu, X, Moon, Sun, Code2, LogOut, Settings } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { setLocale } from "@/lib/locale";
+import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 export default function Header() {
     const t = useTranslations("nav");
+    const pathname = usePathname();
+    const router = useRouter();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDark, setIsDark] = useState(true);
     const [isVietnamese, setIsVietnamese] = useState(true);
     const [isPending, startTransition] = useTransition();
-    const router = useRouter();
+    const [user, setUser] = useState<User | null>(null);
 
     const navLinks = [
         { href: "/", label: t("home") },
@@ -40,7 +44,22 @@ export default function Header() {
         };
         checkLocale();
 
-        return () => window.removeEventListener("scroll", handleScroll);
+        // Check auth state
+        const checkAuth = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            setUser(session?.user ?? null);
+        };
+        checkAuth();
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+        });
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            subscription.unsubscribe();
+        };
     }, []);
 
     const toggleTheme = () => {
@@ -56,6 +75,19 @@ export default function Header() {
             await setLocale(newLocale);
             router.refresh();
         });
+    };
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        setUser(null);
+        router.push("/");
+        router.refresh();
+    };
+
+    // Check if current path matches link
+    const isActive = (href: string) => {
+        if (href === "/") return pathname === "/";
+        return pathname.startsWith(href);
     };
 
     return (
@@ -85,11 +117,27 @@ export default function Header() {
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="px-4 py-2 rounded-lg text-sm font-medium text-dark-text/80 hover:text-white hover:bg-white/10 transition-all duration-200"
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive(link.href)
+                                        ? "text-white bg-white/10 border-b-2 border-primary-500"
+                                        : "text-dark-text/80 hover:text-white hover:bg-white/10"
+                                    }`}
                             >
                                 {link.label}
                             </Link>
                         ))}
+                        {/* Admin link - only show when logged in */}
+                        {user && (
+                            <Link
+                                href="/admin/dashboard"
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${pathname.startsWith("/admin")
+                                        ? "text-amber-400 bg-amber-500/10"
+                                        : "text-amber-400/80 hover:text-amber-400 hover:bg-amber-500/10"
+                                    }`}
+                            >
+                                <Settings className="w-4 h-4 inline mr-1" />
+                                {t("admin")}
+                            </Link>
+                        )}
                     </nav>
 
                     {/* Actions */}
@@ -120,13 +168,16 @@ export default function Header() {
                             )}
                         </button>
 
-                        {/* Admin Link */}
-                        <Link
-                            href="/admin/login"
-                            className="hidden sm:inline-flex px-4 py-2 rounded-lg text-sm font-medium bg-white/10 hover:bg-white/20 transition-colors duration-200"
-                        >
-                            {t("admin")}
-                        </Link>
+                        {/* Logout button - only show when logged in */}
+                        {user && (
+                            <button
+                                onClick={handleLogout}
+                                className="hidden sm:inline-flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors duration-200"
+                                title="Đăng xuất"
+                            >
+                                <LogOut className="w-4 h-4" />
+                            </button>
+                        )}
 
                         {/* Mobile Menu Button */}
                         <button
@@ -157,18 +208,37 @@ export default function Header() {
                             key={link.href}
                             href={link.href}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="px-4 py-3 rounded-lg text-sm font-medium text-dark-text/80 hover:text-white hover:bg-white/10 transition-all duration-200"
+                            className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${isActive(link.href)
+                                    ? "text-white bg-white/10 border-l-2 border-primary-500"
+                                    : "text-dark-text/80 hover:text-white hover:bg-white/10"
+                                }`}
                         >
                             {link.label}
                         </Link>
                     ))}
-                    <Link
-                        href="/admin/login"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="px-4 py-3 rounded-lg text-sm font-medium bg-white/10 hover:bg-white/20 transition-colors duration-200 text-center mt-2"
-                    >
-                        {t("admin")}
-                    </Link>
+                    {/* Admin link in mobile - only show when logged in */}
+                    {user && (
+                        <>
+                            <Link
+                                href="/admin/dashboard"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="px-4 py-3 rounded-lg text-sm font-medium text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 transition-colors duration-200 text-center mt-2"
+                            >
+                                <Settings className="w-4 h-4 inline mr-1" />
+                                {t("admin")}
+                            </Link>
+                            <button
+                                onClick={() => {
+                                    handleLogout();
+                                    setIsMobileMenuOpen(false);
+                                }}
+                                className="px-4 py-3 rounded-lg text-sm font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 transition-colors duration-200 text-center mt-2"
+                            >
+                                <LogOut className="w-4 h-4 inline mr-1" />
+                                Đăng xuất
+                            </button>
+                        </>
+                    )}
                 </nav>
             </div>
         </header>

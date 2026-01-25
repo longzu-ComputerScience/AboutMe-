@@ -1,20 +1,70 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
     Plus,
     Search,
     Edit,
     Trash2,
     ExternalLink,
-    MoreVertical,
 } from "lucide-react";
-import { projects } from "@/lib/mockData";
+import { supabase } from "@/lib/supabase";
+
+interface Project {
+    id: string;
+    title: string;
+    description: string;
+    image_url: string | null;
+    category: string;
+    tags: string[] | null;
+    is_paid: boolean;
+    demo_url: string | null;
+    is_published: boolean;
+}
 
 export default function AdminProjectsPage() {
+    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState("");
+    const [projects, setProjects] = useState<Project[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+
+    // Check auth and fetch projects
+    useEffect(() => {
+        const init = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                router.push("/admin/login");
+                return;
+            }
+
+            const { data, error } = await supabase
+                .from("projects")
+                .select("*")
+                .order("created_at", { ascending: false });
+
+            if (!error && data) {
+                setProjects(data);
+            }
+            setIsLoading(false);
+        };
+        init();
+    }, [router]);
+
+    const handleDelete = async (id: string) => {
+        const { error } = await supabase
+            .from("projects")
+            .delete()
+            .eq("id", id);
+
+        if (!error) {
+            setProjects(prev => prev.filter(p => p.id !== id));
+        }
+        setDeleteId(null);
+    };
 
     const filteredProjects = projects.filter(
         (project) =>
@@ -22,8 +72,42 @@ export default function AdminProjectsPage() {
             project.category?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[50vh]">
+                <div className="w-8 h-8 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6">
+            {/* Delete Confirmation Modal */}
+            {deleteId && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                    <div className="bg-dark-card border border-dark-border rounded-2xl p-6 max-w-md mx-4">
+                        <h3 className="text-lg font-semibold mb-2">Delete Project?</h3>
+                        <p className="text-dark-muted mb-6">
+                            This action cannot be undone.
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setDeleteId(null)}
+                                className="flex-1 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => handleDelete(deleteId)}
+                                className="flex-1 px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 transition-colors"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -67,7 +151,7 @@ export default function AdminProjectsPage() {
                                     Type
                                 </th>
                                 <th className="text-left py-4 px-6 text-sm font-medium text-dark-muted">
-                                    Tags
+                                    Status
                                 </th>
                                 <th className="text-right py-4 px-6 text-sm font-medium text-dark-muted">
                                     Actions
@@ -83,12 +167,16 @@ export default function AdminProjectsPage() {
                                     <td className="py-4 px-6">
                                         <div className="flex items-center gap-3">
                                             <div className="w-12 h-12 rounded-lg overflow-hidden bg-white/5 relative">
-                                                <Image
-                                                    src={project.image}
-                                                    alt={project.title}
-                                                    fill
-                                                    className="object-cover"
-                                                />
+                                                {project.image_url ? (
+                                                    <Image
+                                                        src={project.image_url}
+                                                        alt={project.title}
+                                                        fill
+                                                        className="object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full bg-gradient-to-br from-primary-500/20 to-accent-purple/20" />
+                                                )}
                                             </div>
                                             <div>
                                                 <p className="font-medium">{project.title}</p>
@@ -105,36 +193,29 @@ export default function AdminProjectsPage() {
                                     </td>
                                     <td className="py-4 px-6">
                                         <span
-                                            className={`text-xs px-2 py-1 rounded-full ${project.isPaid
-                                                    ? "bg-amber-500/20 text-amber-400"
-                                                    : "bg-emerald-500/20 text-emerald-400"
+                                            className={`text-xs px-2 py-1 rounded-full ${project.is_paid
+                                                ? "bg-amber-500/20 text-amber-400"
+                                                : "bg-emerald-500/20 text-emerald-400"
                                                 }`}
                                         >
-                                            {project.isPaid ? "Paid" : "Free"}
+                                            {project.is_paid ? "Paid" : "Free"}
                                         </span>
                                     </td>
                                     <td className="py-4 px-6">
-                                        <div className="flex gap-1">
-                                            {project.tags.slice(0, 2).map((tag) => (
-                                                <span
-                                                    key={tag}
-                                                    className="text-xs px-2 py-1 rounded bg-white/5 text-dark-muted"
-                                                >
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                            {project.tags.length > 2 && (
-                                                <span className="text-xs px-2 py-1 text-dark-muted">
-                                                    +{project.tags.length - 2}
-                                                </span>
-                                            )}
-                                        </div>
+                                        <span
+                                            className={`text-xs px-2 py-1 rounded-full ${project.is_published
+                                                ? "bg-emerald-500/20 text-emerald-400"
+                                                : "bg-gray-500/20 text-gray-400"
+                                                }`}
+                                        >
+                                            {project.is_published ? "Published" : "Draft"}
+                                        </span>
                                     </td>
                                     <td className="py-4 px-6">
                                         <div className="flex items-center justify-end gap-2">
-                                            {project.demoUrl && (
+                                            {project.demo_url && (
                                                 <a
-                                                    href={project.demoUrl}
+                                                    href={project.demo_url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="p-2 rounded-lg hover:bg-white/10 transition-colors"
@@ -143,13 +224,15 @@ export default function AdminProjectsPage() {
                                                     <ExternalLink className="w-4 h-4" />
                                                 </a>
                                             )}
-                                            <button
+                                            <Link
+                                                href={`/admin/projects/${project.id}`}
                                                 className="p-2 rounded-lg hover:bg-white/10 transition-colors"
                                                 title="Edit"
                                             >
                                                 <Edit className="w-4 h-4" />
-                                            </button>
+                                            </Link>
                                             <button
+                                                onClick={() => setDeleteId(project.id)}
                                                 className="p-2 rounded-lg hover:bg-red-500/10 hover:text-red-400 transition-colors"
                                                 title="Delete"
                                             >
@@ -165,7 +248,11 @@ export default function AdminProjectsPage() {
 
                 {filteredProjects.length === 0 && (
                     <div className="py-12 text-center">
-                        <p className="text-dark-muted">No projects found</p>
+                        <p className="text-dark-muted">
+                            {projects.length === 0
+                                ? "No projects yet. Create your first project!"
+                                : "No projects found"}
+                        </p>
                     </div>
                 )}
             </div>

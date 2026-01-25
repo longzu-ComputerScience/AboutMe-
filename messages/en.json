@@ -10,7 +10,8 @@
         "admin": "Admin"
     },
     "profile": {
-        "bio": "Hello! I'm a UIT student passionate about technology. Here I share my IT learning experience, tips for achieving high grades, useful tools, and personal projects for your reference. Especially for UIT students!"
+        "bio": "UIT Student | Sharing IT learning tips, useful tools & personal projects for students. Also providing web design & project collaboration for businesses.",
+        "bioShort": "UIT student passionate about technology"
     },
     "hero": {
         "badge": "Available for freelance work",
@@ -25,6 +26,18 @@
             "viewProjects": "View Projects",
             "downloadCV": "Download CV",
             "contactMe": "Contact Me"
+        },
+        "audience": {
+            "student": {
+                "title": "🎓 Students",
+                "subtitle": "Study Tips, Tools, Projects",
+                "cta": "Explore Now"
+            },
+            "business": {
+                "title": "💼 Business",
+                "subtitle": "Design, Collaboration",
+                "cta": "View Services"
+            }
         }
     },
     "sections": {
@@ -48,6 +61,19 @@
             "viewServices": "View Services"
         }
     },
+    "projects": {
+        "title": "My",
+        "titleHighlight": "Projects",
+        "description": "A collection of projects I've worked on, from web applications to tools and templates.",
+        "searchPlaceholder": "Search projects...",
+        "filters": {
+            "all": "All",
+            "free": "Free",
+            "paid": "Paid"
+        },
+        "noResults": "No projects found matching your criteria.",
+        "clearFilters": "Clear filters"
+    },
     "services": {
         "webDev": {
             "title": "Web Development",
@@ -68,7 +94,9 @@
         "description1": "I'm a passionate developer with a love for creating beautiful, functional digital experiences. With expertise in modern web technologies, I help businesses and individuals bring their ideas to life.",
         "description2": "When I'm not coding, you can find me exploring new technologies, contributing to open-source projects, or sharing knowledge through blog posts and tutorials.",
         "experience": "Years Experience",
-        "available": "Available for hire"
+        "available": "Available for hire",
+        "yearsExperience": "years experience",
+        "availableForHire": "Available for hire"
     },
     "skills": {
         "title": "My",
@@ -79,20 +107,6 @@
         "title": "My",
         "titleHighlight": "Journey",
         "description": "Education, work experience, and key achievements along the way."
-    },
-    "projects": {
-        "title": "My",
-        "titleHighlight": "Projects",
-        "description": "A collection of projects I've worked on, from web applications to tools and templates.",
-        "searchPlaceholder": "Search projects...",
-        "filters": {
-            "all": "All",
-            "free": "Free",
-            "paid": "Paid"
-        },
-        "noResults": "No projects found matching your criteria.",
-        "clearFilters": "Clear filters",
-        "viewDetails": "View Details"
     },
     "blog": {
         "title": "Knowledge",

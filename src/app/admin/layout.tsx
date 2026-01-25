@@ -14,6 +14,7 @@ import {
     Menu,
     X,
     ChevronRight,
+    Mail,
 } from "lucide-react";
 
 const sidebarLinks = [
@@ -21,6 +22,7 @@ const sidebarLinks = [
     { href: "/admin/projects", icon: FolderKanban, label: "Projects" },
     { href: "/admin/blog", icon: FileText, label: "Blog Posts" },
     { href: "/admin/services", icon: Briefcase, label: "Services" },
+    { href: "/admin/contacts", icon: Mail, label: "Contacts" },
     { href: "/admin/profile", icon: User, label: "Profile" },
     { href: "/admin/settings", icon: Settings, label: "Settings" },
 ];
@@ -73,8 +75,8 @@ export default function AdminLayout({
                                     href={link.href}
                                     onClick={() => setSidebarOpen(false)}
                                     className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
-                                            ? "bg-primary-500/20 text-primary-400 border border-primary-500/30"
-                                            : "hover:bg-white/5 text-dark-text/70 hover:text-white"
+                                        ? "bg-primary-500/20 text-primary-400 border border-primary-500/30"
+                                        : "hover:bg-white/5 text-dark-text/70 hover:text-white"
                                         }`}
                                 >
                                     <link.icon className="w-5 h-5" />

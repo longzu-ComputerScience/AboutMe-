@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Metadata } from "next";
 import { Send, Mail, MapPin, Phone, Github, Linkedin, Facebook, CheckCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { profileData } from "@/lib/mockData";
+import { supabase } from "@/lib/supabase";
 
 export default function ContactPage() {
+    const t = useTranslations();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -14,17 +16,37 @@ export default function ContactPage() {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [error, setError] = useState("");
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
+        setError("");
 
-        // Simulate form submission
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        try {
+            // Save to Supabase contacts table
+            const { error: insertError } = await supabase
+                .from("contacts")
+                .insert({
+                    name: formData.name,
+                    email: formData.email,
+                    subject: formData.subject,
+                    message: formData.message,
+                });
 
-        setIsSubmitting(false);
-        setIsSubmitted(true);
-        setFormData({ name: "", email: "", subject: "", message: "" });
+            if (insertError) {
+                setError("Có lỗi xảy ra. Vui lòng thử lại!");
+                console.error("Contact form error:", insertError);
+                return;
+            }
+
+            setIsSubmitted(true);
+            setFormData({ name: "", email: "", subject: "", message: "" });
+        } catch {
+            setError("Có lỗi xảy ra. Vui lòng thử lại!");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -33,10 +55,10 @@ export default function ContactPage() {
             <section className="section-container pb-8">
                 <div className="text-center">
                     <h1 className="section-title">
-                        Get in <span className="gradient-text">Touch</span>
+                        {t("contact.title")} <span className="gradient-text">{t("contact.titleHighlight")}</span>
                     </h1>
                     <p className="text-dark-muted max-w-2xl mx-auto">
-                        Have a project in mind or want to collaborate? I&apos;d love to hear from you.
+                        {t("contact.description")}
                     </p>
                 </div>
             </section>
@@ -50,23 +72,29 @@ export default function ContactPage() {
                             {isSubmitted ? (
                                 <div className="text-center py-12">
                                     <CheckCircle className="w-16 h-16 mx-auto mb-4 text-emerald-400" />
-                                    <h3 className="text-xl font-semibold mb-2">Message Sent!</h3>
+                                    <h3 className="text-xl font-semibold mb-2">{t("contact.success.title")}</h3>
                                     <p className="text-dark-muted mb-6">
-                                        Thank you for reaching out. I&apos;ll get back to you as soon as possible.
+                                        {t("contact.success.description")}
                                     </p>
                                     <button
                                         onClick={() => setIsSubmitted(false)}
                                         className="text-primary-400 hover:text-primary-300 transition-colors"
                                     >
-                                        Send another message
+                                        {t("contact.success.sendAnother")}
                                     </button>
                                 </div>
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-6">
+                                    {error && (
+                                        <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400">
+                                            {error}
+                                        </div>
+                                    )}
+
                                     <div className="grid sm:grid-cols-2 gap-6">
                                         <div>
                                             <label htmlFor="name" className="block text-sm font-medium mb-2">
-                                                Name
+                                                {t("contact.form.name")}
                                             </label>
                                             <input
                                                 type="text"
@@ -75,7 +103,7 @@ export default function ContactPage() {
                                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                                 required
                                                 className="w-full px-4 py-3 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all"
-                                                placeholder="Your name"
+                                                placeholder={t("contact.form.namePlaceholder")}
                                             />
                                         </div>
                                         <div>
@@ -96,7 +124,7 @@ export default function ContactPage() {
 
                                     <div>
                                         <label htmlFor="subject" className="block text-sm font-medium mb-2">
-                                            Subject
+                                            {t("contact.form.subject")}
                                         </label>
                                         <input
                                             type="text"
@@ -105,13 +133,13 @@ export default function ContactPage() {
                                             onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                                             required
                                             className="w-full px-4 py-3 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all"
-                                            placeholder="What's this about?"
+                                            placeholder={t("contact.form.subjectPlaceholder")}
                                         />
                                     </div>
 
                                     <div>
                                         <label htmlFor="message" className="block text-sm font-medium mb-2">
-                                            Message
+                                            {t("contact.form.message")}
                                         </label>
                                         <textarea
                                             id="message"
@@ -120,7 +148,7 @@ export default function ContactPage() {
                                             required
                                             rows={6}
                                             className="w-full px-4 py-3 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all resize-none"
-                                            placeholder="Tell me about your project..."
+                                            placeholder={t("contact.form.messagePlaceholder")}
                                         />
                                     </div>
 
@@ -132,12 +160,12 @@ export default function ContactPage() {
                                         {isSubmitting ? (
                                             <>
                                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                Sending...
+                                                {t("contact.form.sending")}
                                             </>
                                         ) : (
                                             <>
                                                 <Send className="w-4 h-4" />
-                                                Send Message
+                                                {t("contact.form.send")}
                                             </>
                                         )}
                                     </button>
@@ -149,7 +177,7 @@ export default function ContactPage() {
                     {/* Contact Info */}
                     <div className="lg:col-span-2 space-y-6">
                         <div className="bg-dark-card border border-dark-border rounded-2xl p-6">
-                            <h3 className="font-semibold mb-4">Contact Information</h3>
+                            <h3 className="font-semibold mb-4">{t("contact.info.title")}</h3>
                             <ul className="space-y-4">
                                 <li className="flex items-start gap-3">
                                     <div className="w-10 h-10 rounded-lg bg-primary-500/20 flex items-center justify-center flex-shrink-0">
@@ -167,7 +195,7 @@ export default function ContactPage() {
                                         <MapPin className="w-5 h-5 text-accent-purple" />
                                     </div>
                                     <div>
-                                        <p className="text-sm text-dark-muted">Location</p>
+                                        <p className="text-sm text-dark-muted">{t("contact.info.location")}</p>
                                         <p>{profileData.location}</p>
                                     </div>
                                 </li>
@@ -176,7 +204,7 @@ export default function ContactPage() {
                                         <Phone className="w-5 h-5 text-emerald-400" />
                                     </div>
                                     <div>
-                                        <p className="text-sm text-dark-muted">Availability</p>
+                                        <p className="text-sm text-dark-muted">{t("contact.info.availability")}</p>
                                         <p>Mon - Fri, 9:00 - 18:00</p>
                                     </div>
                                 </li>
@@ -184,7 +212,7 @@ export default function ContactPage() {
                         </div>
 
                         <div className="bg-dark-card border border-dark-border rounded-2xl p-6">
-                            <h3 className="font-semibold mb-4">Connect on Social</h3>
+                            <h3 className="font-semibold mb-4">{t("contact.social.title")}</h3>
                             <div className="flex gap-3">
                                 <a
                                     href={profileData.social.github}
@@ -214,9 +242,9 @@ export default function ContactPage() {
                         </div>
 
                         <div className="bg-gradient-to-r from-primary-500/10 via-accent-purple/10 to-pink-500/10 border border-white/10 rounded-2xl p-6">
-                            <h3 className="font-semibold mb-2">Quick Response</h3>
+                            <h3 className="font-semibold mb-2">{t("contact.quickResponse.title")}</h3>
                             <p className="text-sm text-dark-muted">
-                                I typically respond within 24 hours. For urgent matters, feel free to reach out via social media.
+                                {t("contact.quickResponse.description")}
                             </p>
                         </div>
                     </div>
