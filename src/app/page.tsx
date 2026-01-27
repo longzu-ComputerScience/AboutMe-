@@ -30,6 +30,27 @@ export default function HomePage() {
     const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
     const [isVietnamese, setIsVietnamese] = useState(true);
 
+    // Get locale from cookie synchronously
+    useEffect(() => {
+        const getCookieLocale = () => {
+            const cookies = document.cookie.split("; ");
+            const localeCookie = cookies.find((c) => c.startsWith("locale="));
+            return localeCookie ? localeCookie.split("=")[1] : "vi";
+        };
+
+        setIsVietnamese(getCookieLocale() === "vi");
+
+        // Listen for locale changes
+        const handleLocaleChange = () => {
+            setIsVietnamese(getCookieLocale() === "vi");
+        };
+        window.addEventListener("localeChange", handleLocaleChange);
+
+        return () => {
+            window.removeEventListener("localeChange", handleLocaleChange);
+        };
+    }, []);
+
     useEffect(() => {
         // Fetch featured projects from Supabase
         const fetchProjects = async () => {
@@ -46,19 +67,7 @@ export default function HomePage() {
             }
         };
 
-        // Check locale
-        const checkLocale = async () => {
-            try {
-                const response = await fetch("/api/locale");
-                const data = await response.json();
-                setIsVietnamese(data.locale === "vi");
-            } catch {
-                setIsVietnamese(true);
-            }
-        };
-
         fetchProjects();
-        checkLocale();
     }, []);
 
     // Get localized title and description

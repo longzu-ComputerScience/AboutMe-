@@ -303,6 +303,38 @@ CREATE TRIGGER update_site_settings_updated_at
     FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- =====================================================
+-- STORAGE BUCKET SETUP (Run this separately in Dashboard or here)
+-- =====================================================
+
+-- Create storage bucket for images (avatars, project images)
+-- NOTE: Run this in Supabase Dashboard > SQL Editor
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+    'images',
+    'images',
+    true,
+    5242880, -- 5MB limit
+    ARRAY['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+) ON CONFLICT (id) DO NOTHING;
+
+-- Storage policies for images bucket
+-- Public can view all images
+CREATE POLICY "Public can view images" ON storage.objects
+    FOR SELECT USING (bucket_id = 'images');
+
+-- Authenticated users can upload images
+CREATE POLICY "Authenticated users can upload images" ON storage.objects
+    FOR INSERT WITH CHECK (bucket_id = 'images' AND auth.role() = 'authenticated');
+
+-- Authenticated users can update their images
+CREATE POLICY "Authenticated users can update images" ON storage.objects
+    FOR UPDATE USING (bucket_id = 'images' AND auth.role() = 'authenticated');
+
+-- Authenticated users can delete images
+CREATE POLICY "Authenticated users can delete images" ON storage.objects
+    FOR DELETE USING (bucket_id = 'images' AND auth.role() = 'authenticated');
+
+-- =====================================================
 -- SAMPLE DATA (Optional - uncomment to insert)
 -- =====================================================
 

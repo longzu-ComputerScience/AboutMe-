@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Save, Trash2, Image as ImageIcon, Link as LinkIcon, Tag, DollarSign } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, Save, Trash2, Image as ImageIcon, Link as LinkIcon, Tag, DollarSign, Upload, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 interface Project {
@@ -30,12 +31,16 @@ export default function EditProjectPage() {
     const router = useRouter();
     const params = useParams();
     const projectId = params.id as string;
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [isLoading, setIsLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
+    const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [useUrlInput, setUseUrlInput] = useState(false);
 
     const [formData, setFormData] = useState({
         title: "",
@@ -97,11 +102,84 @@ export default function EditProjectPage() {
                 is_featured: project.is_featured || false,
                 is_published: project.is_published ?? true,
             });
+            if (project.image_url) {
+                setImagePreview(project.image_url);
+            }
             setIsFetching(false);
         };
 
         init();
     }, [projectId, router]);
+
+    // Handle image upload
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            setError('Please select an image file');
+            return;
+        }
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            setError('Image size should be less than 5MB');
+            return;
+        }
+
+        setIsUploading(true);
+        setError('');
+
+        try {
+            // Create preview
+            const previewUrl = URL.createObjectURL(file);
+            setImagePreview(previewUrl);
+
+            // Generate unique filename
+            const fileExt = file.name.split('.').pop();
+            const fileName = `project-${projectId}-${Date.now()}.${fileExt}`;
+            const filePath = `projects/${fileName}`;
+
+            // Upload to Supabase Storage
+            const { error: uploadError } = await supabase.storage
+                .from('images')
+                .upload(filePath, file, {
+                    cacheControl: '3600',
+                    upsert: true
+                });
+
+            if (uploadError) {
+                setError(uploadError.message);
+                setImagePreview(formData.image_url || null);
+                return;
+            }
+
+            // Get public URL
+            const { data: { publicUrl } } = supabase.storage
+                .from('images')
+                .getPublicUrl(filePath);
+
+            // Update form data
+            setFormData(prev => ({ ...prev, image_url: publicUrl }));
+            setImagePreview(publicUrl);
+
+        } catch {
+            setError('Failed to upload image');
+            setImagePreview(formData.image_url || null);
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    // Remove image
+    const handleRemoveImage = () => {
+        setImagePreview(null);
+        setFormData(prev => ({ ...prev, image_url: '' }));
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
@@ -348,6 +426,108 @@ export default function EditProjectPage() {
                             </div>
                         </div>
 
+                        {/* Project Image */}
+                        <div className="bg-dark-card border border-dark-border rounded-2xl p-6">
+                            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                <ImageIcon className="w-5 h-5" />
+                                Project Image
+                            </h2>
+
+                            <div className="space-y-4">
+                                {/* Upload / URL Toggle */}
+                                <div className="flex gap-2 mb-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setUseUrlInput(false)}
+                                        className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${!useUrlInput ? 'bg-primary-500 text-white' : 'bg-white/10 hover:bg-white/20'}`}
+                                    >
+                                        <Upload className="w-4 h-4 inline mr-1" />
+                                        Upload
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setUseUrlInput(true)}
+                                        className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${useUrlInput ? 'bg-primary-500 text-white' : 'bg-white/10 hover:bg-white/20'}`}
+                                    >
+                                        <LinkIcon className="w-4 h-4 inline mr-1" />
+                                        URL
+                                    </button>
+                                </div>
+
+                                {!useUrlInput ? (
+                                    <>
+                                        {/* Image Preview */}
+                                        {imagePreview && (
+                                            <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-white/5">
+                                                <Image
+                                                    src={imagePreview}
+                                                    alt="Project preview"
+                                                    fill
+                                                    className="object-cover"
+                                                    sizes="(max-width: 768px) 100vw, 50vw"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={handleRemoveImage}
+                                                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors"
+                                                    title="Remove image"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {/* Upload Area */}
+                                        <div
+                                            onClick={() => fileInputRef.current?.click()}
+                                            className="border-2 border-dashed border-dark-border rounded-xl p-8 text-center cursor-pointer hover:border-primary-500/50 hover:bg-white/5 transition-all"
+                                        >
+                                            <input
+                                                ref={fileInputRef}
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleImageUpload}
+                                                className="hidden"
+                                            />
+                                            {isUploading ? (
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <div className="w-8 h-8 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
+                                                    <span className="text-sm text-dark-muted">Uploading...</span>
+                                                </div>
+                                            ) : (
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <Upload className="w-8 h-8 text-dark-muted" />
+                                                    <span className="text-sm text-dark-muted">
+                                                        Click to upload image
+                                                    </span>
+                                                    <span className="text-xs text-dark-muted">
+                                                        Max 5MB, JPG/PNG/GIF
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">
+                                            Image URL
+                                        </label>
+                                        <input
+                                            type="url"
+                                            name="image_url"
+                                            value={formData.image_url}
+                                            onChange={(e) => {
+                                                handleChange(e);
+                                                setImagePreview(e.target.value || null);
+                                            }}
+                                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                                            placeholder="https://example.com/image.jpg"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
                         {/* Links */}
                         <div className="bg-dark-card border border-dark-border rounded-2xl p-6">
                             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -356,21 +536,6 @@ export default function EditProjectPage() {
                             </h2>
 
                             <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-2">
-                                        <ImageIcon className="w-4 h-4 inline mr-1" />
-                                        Image URL
-                                    </label>
-                                    <input
-                                        type="url"
-                                        name="image_url"
-                                        value={formData.image_url}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
-                                        placeholder="https://example.com/image.jpg"
-                                    />
-                                </div>
-
                                 <div>
                                     <label className="block text-sm font-medium mb-2">
                                         Demo URL

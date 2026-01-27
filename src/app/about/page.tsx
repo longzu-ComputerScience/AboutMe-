@@ -27,19 +27,32 @@ export default function AboutPage() {
     const t = useTranslations();
     const [profile, setProfile] = useState<Profile | null>(null);
     const [isVietnamese, setIsVietnamese] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Get locale from cookie synchronously
+    useEffect(() => {
+        const getCookieLocale = () => {
+            const cookies = document.cookie.split("; ");
+            const localeCookie = cookies.find((c) => c.startsWith("locale="));
+            return localeCookie ? localeCookie.split("=")[1] : "vi";
+        };
+
+        setIsVietnamese(getCookieLocale() === "vi");
+
+        // Listen for locale changes
+        const handleLocaleChange = () => {
+            setIsVietnamese(getCookieLocale() === "vi");
+        };
+        window.addEventListener("localeChange", handleLocaleChange);
+
+        return () => {
+            window.removeEventListener("localeChange", handleLocaleChange);
+        };
+    }, []);
 
     useEffect(() => {
-        const init = async () => {
-            // Check locale
-            try {
-                const response = await fetch("/api/locale");
-                const data = await response.json();
-                setIsVietnamese(data.locale === "vi");
-            } catch {
-                setIsVietnamese(true);
-            }
-
-            // Fetch profile from Supabase
+        // Fetch profile from Supabase
+        const fetchProfile = async () => {
             const { data } = await supabase
                 .from("profiles")
                 .select("*")
@@ -49,8 +62,9 @@ export default function AboutPage() {
             if (data) {
                 setProfile(data);
             }
+            setIsLoading(false);
         };
-        init();
+        fetchProfile();
     }, []);
 
     // Use Supabase data if available, fallback to mockData
@@ -69,6 +83,40 @@ export default function AboutPage() {
     const displayLocation = profile?.location || profileData.location;
     const displayEmail = profile?.email || profileData.email;
     const isAvailable = profile?.is_available_for_hire ?? true;
+    const avatarUrl = profile?.avatar_url || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80";
+
+    // Show loading skeleton while fetching
+    if (isLoading) {
+        return (
+            <section className="section-container">
+                <div className="grid lg:grid-cols-2 gap-12 items-center">
+                    {/* Skeleton Image */}
+                    <div className="relative">
+                        <div className="relative w-full max-w-md mx-auto aspect-square">
+                            <div className="w-full h-full rounded-3xl bg-white/5 animate-pulse" />
+                        </div>
+                    </div>
+                    {/* Skeleton Content */}
+                    <div className="space-y-6">
+                        <div className="space-y-4">
+                            <div className="h-4 w-24 bg-white/5 rounded animate-pulse" />
+                            <div className="h-12 w-3/4 bg-white/5 rounded animate-pulse" />
+                            <div className="h-6 w-1/2 bg-white/5 rounded animate-pulse" />
+                        </div>
+                        <div className="space-y-2">
+                            <div className="h-4 w-full bg-white/5 rounded animate-pulse" />
+                            <div className="h-4 w-full bg-white/5 rounded animate-pulse" />
+                            <div className="h-4 w-2/3 bg-white/5 rounded animate-pulse" />
+                        </div>
+                        <div className="flex gap-4 pt-4">
+                            <div className="h-10 w-32 bg-white/5 rounded-lg animate-pulse" />
+                            <div className="h-10 w-48 bg-white/5 rounded-lg animate-pulse" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <>
@@ -85,7 +133,7 @@ export default function AboutPage() {
                             {/* Image container */}
                             <div className="relative w-full h-full rounded-3xl overflow-hidden border-2 border-white/10">
                                 <Image
-                                    src={profile?.avatar_url || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80"}
+                                    src={avatarUrl}
                                     alt={displayName}
                                     fill
                                     className="object-cover"

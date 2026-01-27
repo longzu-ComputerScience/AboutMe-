@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Upload, User, Mail, MapPin, Briefcase } from "lucide-react";
+import Image from "next/image";
+import { Save, Upload, User, Mail, MapPin, Briefcase, X } from "lucide-react";
 import { profileData, skills } from "@/lib/mockData";
 import { supabase } from "@/lib/supabase";
 
@@ -16,6 +17,7 @@ interface Profile {
     bio_vi: string | null;
     email: string | null;
     location: string | null;
+    avatar_url: string | null;
     github_url: string | null;
     linkedin_url: string | null;
     facebook_url: string | null;
@@ -23,6 +25,7 @@ interface Profile {
 
 export default function AdminProfilePage() {
     const router = useRouter();
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [profile, setProfile] = useState({
         id: "",
         name: profileData.name,
@@ -33,14 +36,17 @@ export default function AdminProfilePage() {
         bio_vi: "",
         email: profileData.email,
         location: profileData.location,
+        avatar_url: "",
         github_url: profileData.social.github,
         linkedin_url: profileData.social.linkedin,
         facebook_url: profileData.social.facebook,
     });
     const [isSaving, setIsSaving] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isUploading, setIsUploading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState("");
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
     // Check auth and fetch profile
     useEffect(() => {
@@ -69,19 +75,93 @@ export default function AdminProfilePage() {
                     bio_vi: data.bio_vi || "",
                     email: data.email || "",
                     location: data.location || "",
+                    avatar_url: data.avatar_url || "",
                     github_url: data.github_url || "",
                     linkedin_url: data.linkedin_url || "",
                     facebook_url: data.facebook_url || "",
                 });
+                if (data.avatar_url) {
+                    setAvatarPreview(data.avatar_url);
+                }
             }
             setIsLoading(false);
         };
         init();
     }, [router]);
 
+    // Handle avatar upload
+    const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            setError('Please select an image file');
+            return;
+        }
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            setError('Image size should be less than 5MB');
+            return;
+        }
+
+        setIsUploading(true);
+        setError('');
+
+        try {
+            // Create preview
+            const previewUrl = URL.createObjectURL(file);
+            setAvatarPreview(previewUrl);
+
+            // Generate unique filename
+            const fileExt = file.name.split('.').pop();
+            const fileName = `avatar-${Date.now()}.${fileExt}`;
+            const filePath = `avatars/${fileName}`;
+
+            // Upload to Supabase Storage
+            const { error: uploadError } = await supabase.storage
+                .from('images')
+                .upload(filePath, file, {
+                    cacheControl: '3600',
+                    upsert: true
+                });
+
+            if (uploadError) {
+                setError(uploadError.message);
+                setAvatarPreview(profile.avatar_url || null);
+                return;
+            }
+
+            // Get public URL
+            const { data: { publicUrl } } = supabase.storage
+                .from('images')
+                .getPublicUrl(filePath);
+
+            // Update profile state with new avatar URL
+            setProfile(prev => ({ ...prev, avatar_url: publicUrl }));
+            setAvatarPreview(publicUrl);
+
+        } catch {
+            setError('Failed to upload image');
+            setAvatarPreview(profile.avatar_url || null);
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    // Remove avatar
+    const handleRemoveAvatar = () => {
+        setAvatarPreview(null);
+        setProfile(prev => ({ ...prev, avatar_url: '' }));
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
     const handleSave = async () => {
         setIsSaving(true);
-        setError("");
+        setError('');
 
         try {
             if (profile.id) {
@@ -97,6 +177,7 @@ export default function AdminProfilePage() {
                         bio_vi: profile.bio_vi || null,
                         email: profile.email || null,
                         location: profile.location || null,
+                        avatar_url: profile.avatar_url || null,
                         github_url: profile.github_url || null,
                         linkedin_url: profile.linkedin_url || null,
                         facebook_url: profile.facebook_url || null,
@@ -120,6 +201,7 @@ export default function AdminProfilePage() {
                         bio_vi: profile.bio_vi || null,
                         email: profile.email || null,
                         location: profile.location || null,
+                        avatar_url: profile.avatar_url || null,
                         github_url: profile.github_url || null,
                         linkedin_url: profile.linkedin_url || null,
                         facebook_url: profile.facebook_url || null,
@@ -200,15 +282,54 @@ export default function AdminProfilePage() {
                 <div className="bg-dark-card border border-dark-border rounded-2xl p-6">
                     <h3 className="font-semibold mb-4">Profile Photo</h3>
                     <div className="text-center">
-                        <div className="w-32 h-32 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-purple flex items-center justify-center text-4xl font-bold">
-                            {profile.name.charAt(0)}
+                        <div className="relative w-32 h-32 mx-auto mb-4">
+                            {avatarPreview ? (
+                                <>
+                                    <Image
+                                        src={avatarPreview}
+                                        alt="Avatar preview"
+                                        fill
+                                        className="rounded-2xl object-cover"
+                                        sizes="128px"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleRemoveAvatar}
+                                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors"
+                                        title="Remove photo"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </>
+                            ) : (
+                                <div className="w-full h-full rounded-2xl bg-gradient-to-br from-primary-500 to-accent-purple flex items-center justify-center text-4xl font-bold">
+                                    {profile.name.charAt(0)}
+                                </div>
+                            )}
+                            {isUploading && (
+                                <div className="absolute inset-0 rounded-2xl bg-black/50 flex items-center justify-center">
+                                    <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                </div>
+                            )}
                         </div>
-                        <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-sm">
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleAvatarUpload}
+                            className="hidden"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={isUploading}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-sm disabled:opacity-50"
+                        >
                             <Upload className="w-4 h-4" />
-                            Upload Photo
+                            {isUploading ? 'Uploading...' : 'Upload Photo'}
                         </button>
                         <p className="text-xs text-dark-muted mt-2">
-                            Recommended: 400x400px
+                            Recommended: 400x400px, Max 5MB
                         </p>
                     </div>
                 </div>

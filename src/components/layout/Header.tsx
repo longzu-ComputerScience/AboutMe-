@@ -73,6 +73,8 @@ export default function Header() {
 
         startTransition(async () => {
             await setLocale(newLocale);
+            // Dispatch event for client components to update
+            window.dispatchEvent(new CustomEvent("localeChange"));
             router.refresh();
         });
     };
@@ -118,8 +120,8 @@ export default function Header() {
                                 key={link.href}
                                 href={link.href}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive(link.href)
-                                        ? "text-white bg-white/10 border-b-2 border-primary-500"
-                                        : "text-dark-text/80 hover:text-white hover:bg-white/10"
+                                    ? "text-white bg-white/10 border-b-2 border-primary-500"
+                                    : "text-dark-text/80 hover:text-white hover:bg-white/10"
                                     }`}
                             >
                                 {link.label}
@@ -130,8 +132,8 @@ export default function Header() {
                             <Link
                                 href="/admin/dashboard"
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${pathname.startsWith("/admin")
-                                        ? "text-amber-400 bg-amber-500/10"
-                                        : "text-amber-400/80 hover:text-amber-400 hover:bg-amber-500/10"
+                                    ? "text-amber-400 bg-amber-500/10"
+                                    : "text-amber-400/80 hover:text-amber-400 hover:bg-amber-500/10"
                                     }`}
                             >
                                 <Settings className="w-4 h-4 inline mr-1" />
@@ -209,8 +211,8 @@ export default function Header() {
                             href={link.href}
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${isActive(link.href)
-                                    ? "text-white bg-white/10 border-l-2 border-primary-500"
-                                    : "text-dark-text/80 hover:text-white hover:bg-white/10"
+                                ? "text-white bg-white/10 border-l-2 border-primary-500"
+                                : "text-dark-text/80 hover:text-white hover:bg-white/10"
                                 }`}
                         >
                             {link.label}
