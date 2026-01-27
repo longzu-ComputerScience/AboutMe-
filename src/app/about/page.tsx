@@ -200,7 +200,7 @@ export default function AboutPage() {
 
                             {/* Floating badges */}
                             <div className="absolute -bottom-4 -right-4 px-4 py-2 rounded-xl bg-dark-card border border-dark-border shadow-lg">
-                                <p className="text-sm font-medium gradient-text">5+ {t("about.yearsExperience")}</p>
+                                <p className="text-sm font-medium gradient-text">2+ {t("about.yearsExperience")}</p>
                             </div>
                         </div>
                     </div>
