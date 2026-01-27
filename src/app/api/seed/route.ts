@@ -10,10 +10,16 @@ import {
     cvData,
 } from "@/lib/mockData";
 
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const getAdminClient = () => {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+        throw new Error("Supabase admin credentials are not configured");
+    }
+
+    return createClient(supabaseUrl, serviceRoleKey);
+};
 
 const parsePublishedAt = (value?: string | null) => {
     if (!value) return null;
@@ -126,7 +132,7 @@ const mapCvTemplates = () =>
         sort_order: index + 1,
     }));
 
-const tableHasRows = async (table: string) => {
+const tableHasRows = async (supabaseAdmin: ReturnType<typeof createClient>, table: string) => {
     const { data, error } = await supabaseAdmin.from(table).select("id").limit(1);
     if (error) {
         throw error;
@@ -136,12 +142,7 @@ const tableHasRows = async (table: string) => {
 
 export async function POST() {
     try {
-        if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-            return NextResponse.json(
-                { error: "SUPABASE_SERVICE_ROLE_KEY not configured" },
-                { status: 500 }
-            );
-        }
+        const supabaseAdmin = getAdminClient();
 
         const results: Record<
             string,
@@ -152,7 +153,7 @@ export async function POST() {
             table: string,
             rows: Record<string, unknown>[]
         ) => {
-            if (await tableHasRows(table)) {
+            if (await tableHasRows(supabaseAdmin, table)) {
                 results[table] = { inserted: 0, skipped: true };
                 return;
             }
