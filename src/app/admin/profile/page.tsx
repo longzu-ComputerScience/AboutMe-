@@ -54,6 +54,34 @@ export default function AdminProfilePage() {
     const [error, setError] = useState("");
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
+    const getStorageInfo = (url: string) => {
+        try {
+            const parsedUrl = new URL(url);
+            const marker = "/storage/v1/object/public/";
+            const markerIndex = parsedUrl.pathname.indexOf(marker);
+            if (markerIndex === -1) return null;
+            const fullPath = parsedUrl.pathname.slice(markerIndex + marker.length);
+            const [bucket, ...rest] = fullPath.split("/");
+            if (!bucket || rest.length === 0) return null;
+            return { bucket, path: rest.join("/") };
+        } catch {
+            return null;
+        }
+    };
+
+    const deleteAvatarFromStorage = async (url: string) => {
+        const info = getStorageInfo(url);
+        if (!info) return;
+
+        const { error: deleteError } = await supabase.storage
+            .from(info.bucket)
+            .remove([info.path]);
+
+        if (deleteError) {
+            throw deleteError;
+        }
+    };
+
     // Check auth and fetch profile
     useEffect(() => {
         const init = async () => {
@@ -147,6 +175,15 @@ export default function AdminProfilePage() {
                 .from('images')
                 .getPublicUrl(filePath);
 
+            // Remove previous avatar from storage if applicable
+            if (profile.avatar_url && profile.avatar_url !== publicUrl) {
+                try {
+                    await deleteAvatarFromStorage(profile.avatar_url);
+                } catch (deleteError) {
+                    setError((deleteError as Error).message || "Failed to delete old avatar");
+                }
+            }
+
             // Update profile state with new avatar URL
             setProfile(prev => ({ ...prev, avatar_url: publicUrl }));
             setAvatarPreview(publicUrl);
@@ -160,7 +197,15 @@ export default function AdminProfilePage() {
     };
 
     // Remove avatar
-    const handleRemoveAvatar = () => {
+    const handleRemoveAvatar = async () => {
+        if (profile.avatar_url) {
+            try {
+                await deleteAvatarFromStorage(profile.avatar_url);
+            } catch (deleteError) {
+                setError((deleteError as Error).message || "Failed to delete avatar");
+            }
+        }
+
         setAvatarPreview(null);
         setProfile(prev => ({ ...prev, avatar_url: '' }));
         if (fileInputRef.current) {
