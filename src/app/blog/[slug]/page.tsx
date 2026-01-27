@@ -1,35 +1,79 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Calendar, Clock, Tag, Share2, Bookmark } from "lucide-react";
-import { blogPosts } from "@/lib/mockData";
+import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
+
+export const dynamic = "force-dynamic";
 
 interface Props {
     params: { slug: string };
 }
 
-export async function generateStaticParams() {
-    return blogPosts.map((post) => ({
-        slug: post.slug,
-    }));
+interface BlogPost {
+    id: string;
+    title: string;
+    title_vi: string | null;
+    excerpt: string | null;
+    excerpt_vi: string | null;
+    content: string | null;
+    content_vi: string | null;
+    slug: string;
+    tags: string[] | null;
+    read_time: string | null;
+    published_at: string | null;
+    created_at: string;
+    is_published: boolean;
 }
 
+const formatDate = (value?: string | null) => {
+    if (!value) return "N/A";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "N/A";
+    return date.toLocaleDateString();
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const post = blogPosts.find((p) => p.slug === params.slug);
-    if (!post) return { title: "Post Not Found" };
+    const locale = cookies().get("locale")?.value || "vi";
+    const isVietnamese = locale === "vi";
+
+    const { data } = await supabase
+        .from("blog_posts")
+        .select("title, title_vi, excerpt, excerpt_vi")
+        .eq("slug", params.slug)
+        .eq("is_published", true)
+        .single();
+
+    if (!data) return { title: "Post Not Found" };
 
     return {
-        title: `${post.title} | LongZu Blog`,
-        description: post.excerpt,
+        title: `${isVietnamese && data.title_vi ? data.title_vi : data.title} | LongZu Blog`,
+        description: isVietnamese && data.excerpt_vi ? data.excerpt_vi : data.excerpt || "",
     };
 }
 
-export default function BlogPostPage({ params }: Props) {
-    const post = blogPosts.find((p) => p.slug === params.slug);
+export default async function BlogPostPage({ params }: Props) {
+    const locale = cookies().get("locale")?.value || "vi";
+    const isVietnamese = locale === "vi";
 
-    if (!post) {
+    const { data, error } = await supabase
+        .from("blog_posts")
+        .select("*")
+        .eq("slug", params.slug)
+        .eq("is_published", true)
+        .single();
+
+    if (error || !data) {
         notFound();
     }
+
+    const post = data as BlogPost;
+    const tags = post.tags || [];
+    const dateLabel = formatDate(post.published_at || post.created_at);
+    const title = isVietnamese && post.title_vi ? post.title_vi : post.title;
+    const excerpt = isVietnamese && post.excerpt_vi ? post.excerpt_vi : post.excerpt;
+    const content = (isVietnamese && post.content_vi ? post.content_vi : post.content)?.trim() || "";
 
     return (
         <>
@@ -51,31 +95,33 @@ export default function BlogPostPage({ params }: Props) {
                     <div className="flex flex-wrap items-center gap-4 text-sm text-dark-muted mb-6">
                         <span className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            {post.date}
+                            {dateLabel}
                         </span>
                         <span className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />
-                            {post.readTime}
+                            {post.read_time || "Quick read"}
                         </span>
                     </div>
 
                     {/* Title */}
                     <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-                        {post.title}
+                        {title}
                     </h1>
 
                     {/* Tags */}
-                    <div className="flex flex-wrap gap-2 mb-8">
-                        {post.tags.map((tag) => (
-                            <span
-                                key={tag}
-                                className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg bg-white/5 border border-white/10 hover:bg-primary-500/20 hover:text-primary-400 transition-colors cursor-pointer"
-                            >
-                                <Tag className="w-3 h-3" />
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
+                    {tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-8">
+                            {tags.map((tag) => (
+                                <span
+                                    key={tag}
+                                    className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg bg-white/5 border border-white/10 hover:bg-primary-500/20 hover:text-primary-400 transition-colors cursor-pointer"
+                                >
+                                    <Tag className="w-3 h-3" />
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                    )}
 
                     {/* Actions */}
                     <div className="flex gap-2 mb-12">
@@ -91,43 +137,53 @@ export default function BlogPostPage({ params }: Props) {
 
                     {/* Content */}
                     <div className="prose prose-invert prose-lg max-w-none">
-                        <p className="lead text-xl text-dark-text/80 mb-8">
-                            {post.excerpt}
-                        </p>
+                        {excerpt && (
+                            <p className="lead text-xl text-dark-text/80 mb-8">
+                                {excerpt}
+                            </p>
+                        )}
 
-                        <h2>Introduction</h2>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-                            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                        </p>
+                        {content ? (
+                            <div className="whitespace-pre-line text-dark-text/80">
+                                {content}
+                            </div>
+                        ) : (
+                            <>
+                                <h2>Introduction</h2>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+                                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                </p>
 
-                        <h2>Getting Started</h2>
-                        <p>
-                            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                            fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                            culpa qui officia deserunt mollit anim id est laborum.
-                        </p>
+                                <h2>Getting Started</h2>
+                                <p>
+                                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                                    fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                                    culpa qui officia deserunt mollit anim id est laborum.
+                                </p>
 
-                        <pre className="bg-dark-card border border-dark-border rounded-xl p-4 overflow-x-auto">
-                            <code>{`// Example code
+                                <pre className="bg-dark-card border border-dark-border rounded-xl p-4 overflow-x-auto">
+                                    <code>{`// Example code
 const greeting = "Hello, World!";
 console.log(greeting);`}</code>
-                        </pre>
+                                </pre>
 
-                        <h2>Key Takeaways</h2>
-                        <ul>
-                            <li>First important point about this topic</li>
-                            <li>Second key learning from the article</li>
-                            <li>Third actionable insight to implement</li>
-                            <li>Fourth best practice to follow</li>
-                        </ul>
+                                <h2>Key Takeaways</h2>
+                                <ul>
+                                    <li>First important point about this topic</li>
+                                    <li>Second key learning from the article</li>
+                                    <li>Third actionable insight to implement</li>
+                                    <li>Fourth best practice to follow</li>
+                                </ul>
 
-                        <h2>Conclusion</h2>
-                        <p>
-                            In conclusion, understanding these concepts will help you build better applications.
-                            Keep practicing and stay curious!
-                        </p>
+                                <h2>Conclusion</h2>
+                                <p>
+                                    In conclusion, understanding these concepts will help you build better applications.
+                                    Keep practicing and stay curious!
+                                </p>
+                            </>
+                        )}
                     </div>
 
                     {/* Author */}

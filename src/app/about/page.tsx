@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { MapPin, Mail, Calendar } from "lucide-react";
+import { MapPin, Mail, Calendar, Github, Linkedin, Facebook, Instagram, Link as LinkIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import SkillBadge from "@/components/ui/SkillBadge";
 import Timeline from "@/components/ui/Timeline";
@@ -21,6 +21,12 @@ interface Profile {
     location: string | null;
     email: string | null;
     is_available_for_hire: boolean;
+    github_url: string | null;
+    linkedin_url: string | null;
+    facebook_url: string | null;
+    instagram_url: string | null;
+    locket_url: string | null;
+    tiktok_url: string | null;
 }
 
 export default function AboutPage() {
@@ -80,10 +86,61 @@ export default function AboutPage() {
         ? (isVietnamese && profile.bio_vi ? profile.bio_vi : profile.bio)
         : profileData.bio;
 
+    const hasProfile = Boolean(profile?.id);
     const displayLocation = profile?.location || profileData.location;
-    const displayEmail = profile?.email || profileData.email;
+    const displayEmail = hasProfile ? profile?.email || "" : profileData.email;
     const isAvailable = profile?.is_available_for_hire ?? true;
     const avatarUrl = profile?.avatar_url || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80";
+    const socialSources = hasProfile
+        ? {
+              facebook: profile?.facebook_url || "",
+              instagram: profile?.instagram_url || "",
+              locket: profile?.locket_url || "",
+              tiktok: profile?.tiktok_url || "",
+              github: profile?.github_url || "",
+              linkedin: profile?.linkedin_url || "",
+          }
+        : {
+              facebook: profileData.social.facebook || "",
+              instagram: profileData.social.instagram || "",
+              locket: profileData.social.locket || "",
+              tiktok: profileData.social.tiktok || "",
+              github: profileData.social.github || "",
+              linkedin: profileData.social.linkedin || "",
+          };
+
+    const socialLinks = [
+        {
+            label: "Facebook",
+            href: socialSources.facebook,
+            icon: Facebook,
+        },
+        {
+            label: "Instagram",
+            href: socialSources.instagram,
+            icon: Instagram,
+        },
+        {
+            label: "Locket",
+            href: socialSources.locket,
+            icon: LinkIcon,
+        },
+        {
+            label: "TikTok",
+            href: socialSources.tiktok,
+            icon: LinkIcon,
+        },
+        {
+            label: "GitHub",
+            href: socialSources.github,
+            icon: Github,
+        },
+        {
+            label: "LinkedIn",
+            href: socialSources.linkedin,
+            icon: Linkedin,
+        },
+    ].filter((link) => Boolean(link.href));
 
     // Show loading skeleton while fetching
     if (isLoading) {
@@ -170,10 +227,6 @@ export default function AboutPage() {
                                 <MapPin className="w-4 h-4 text-primary-400" />
                                 <span className="text-sm">{displayLocation}</span>
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10">
-                                <Mail className="w-4 h-4 text-primary-400" />
-                                <span className="text-sm">{displayEmail}</span>
-                            </div>
                             {isAvailable && (
                                 <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
                                     <Calendar className="w-4 h-4 text-emerald-400" />
@@ -181,6 +234,37 @@ export default function AboutPage() {
                                 </div>
                             )}
                         </div>
+
+                        {socialLinks.length > 0 && (
+                            <div className="pt-6">
+                                <p className="text-sm font-medium mb-3">{t("contact.social.title")}</p>
+                                <div className="flex flex-wrap gap-3">
+                                    {socialLinks.map((social) => (
+                                        <a
+                                            key={social.label}
+                                            href={social.href}
+                                            target={social.label === "Email" ? undefined : "_blank"}
+                                            rel={social.label === "Email" ? undefined : "noopener noreferrer"}
+                                            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 hover:border-primary-500/40 hover:text-primary-400 transition-colors text-sm"
+                                        >
+                                            <social.icon className="w-4 h-4" />
+                                            {social.label}
+                                        </a>
+                                    ))}
+                                </div>
+                                {displayEmail && (
+                                    <div className="mt-4">
+                                        <a
+                                            href={`mailto:${displayEmail}`}
+                                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:border-primary-500/40 hover:text-primary-400 transition-colors"
+                                        >
+                                            <Mail className="w-4 h-4 text-primary-400" />
+                                            <span className="text-sm">{displayEmail}</span>
+                                        </a>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </section>

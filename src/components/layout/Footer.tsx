@@ -5,10 +5,10 @@ import { useTranslations } from "next-intl";
 import { Github, Linkedin, Facebook, Mail, Heart, ArrowUp } from "lucide-react";
 
 const socialLinks = [
-    { href: "https://github.com/longzu", icon: Github, label: "GitHub" },
-    { href: "https://linkedin.com/in/longzu", icon: Linkedin, label: "LinkedIn" },
-    { href: "https://facebook.com/longzu", icon: Facebook, label: "Facebook" },
-    { href: "mailto:contact@longzu.dev", icon: Mail, label: "Email" },
+    { href: "/about", icon: Github, label: "GitHub" },
+    { href: "/about", icon: Linkedin, label: "LinkedIn" },
+    { href: "/about", icon: Facebook, label: "Facebook" },
+    { href: "/about", icon: Mail, label: "Email" },
 ];
 
 export default function Footer() {
@@ -47,16 +47,14 @@ export default function Footer() {
                         {/* Social Links */}
                         <div className="flex gap-3">
                             {socialLinks.map((social) => (
-                                <a
+                                <Link
                                     key={social.label}
                                     href={social.href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
                                     className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all duration-200 hover:scale-110 hover:text-primary-400"
                                     aria-label={social.label}
                                 >
                                     <social.icon className="w-5 h-5" />
-                                </a>
+                                </Link>
                             ))}
                         </div>
                     </div>

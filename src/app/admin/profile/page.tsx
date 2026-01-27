@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Save, Upload, User, Mail, MapPin, Briefcase, X } from "lucide-react";
+import { Save, Upload, User, MapPin, Briefcase, X } from "lucide-react";
 import { profileData, skills } from "@/lib/mockData";
 import { supabase } from "@/lib/supabase";
 
@@ -21,6 +21,9 @@ interface Profile {
     github_url: string | null;
     linkedin_url: string | null;
     facebook_url: string | null;
+    instagram_url: string | null;
+    locket_url: string | null;
+    tiktok_url: string | null;
 }
 
 export default function AdminProfilePage() {
@@ -40,6 +43,9 @@ export default function AdminProfilePage() {
         github_url: profileData.social.github,
         linkedin_url: profileData.social.linkedin,
         facebook_url: profileData.social.facebook,
+        instagram_url: profileData.social.instagram,
+        locket_url: profileData.social.locket,
+        tiktok_url: profileData.social.tiktok,
     });
     const [isSaving, setIsSaving] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -79,6 +85,9 @@ export default function AdminProfilePage() {
                     github_url: data.github_url || "",
                     linkedin_url: data.linkedin_url || "",
                     facebook_url: data.facebook_url || "",
+                    instagram_url: data.instagram_url || "",
+                    locket_url: data.locket_url || "",
+                    tiktok_url: data.tiktok_url || "",
                 });
                 if (data.avatar_url) {
                     setAvatarPreview(data.avatar_url);
@@ -181,6 +190,9 @@ export default function AdminProfilePage() {
                         github_url: profile.github_url || null,
                         linkedin_url: profile.linkedin_url || null,
                         facebook_url: profile.facebook_url || null,
+                        instagram_url: profile.instagram_url || null,
+                        locket_url: profile.locket_url || null,
+                        tiktok_url: profile.tiktok_url || null,
                     })
                     .eq("id", profile.id);
 
@@ -205,6 +217,9 @@ export default function AdminProfilePage() {
                         github_url: profile.github_url || null,
                         linkedin_url: profile.linkedin_url || null,
                         facebook_url: profile.facebook_url || null,
+                        instagram_url: profile.instagram_url || null,
+                        locket_url: profile.locket_url || null,
+                        tiktok_url: profile.tiktok_url || null,
                     })
                     .select()
                     .single();
@@ -388,18 +403,6 @@ export default function AdminProfilePage() {
                         </div>
                         <div>
                             <label className="block text-sm font-medium mb-2">
-                                <Mail className="w-4 h-4 inline mr-2" />
-                                Email
-                            </label>
-                            <input
-                                type="email"
-                                value={profile.email}
-                                onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-2">
                                 <MapPin className="w-4 h-4 inline mr-2" />
                                 Location
                             </label>
@@ -459,33 +462,73 @@ export default function AdminProfilePage() {
             {/* Social Links */}
             <div className="bg-dark-card border border-dark-border rounded-2xl p-6">
                 <h3 className="font-semibold mb-4">Social Links</h3>
-                <div className="grid sm:grid-cols-3 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium mb-2">GitHub</label>
-                        <input
-                            type="url"
-                            value={profile.github_url}
-                            onChange={(e) => setProfile({ ...profile, github_url: e.target.value })}
-                            className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
-                        />
+                <div className="space-y-4">
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium mb-2">Facebook</label>
+                            <input
+                                type="url"
+                                value={profile.facebook_url}
+                                onChange={(e) => setProfile({ ...profile, facebook_url: e.target.value })}
+                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-2">Instagram</label>
+                            <input
+                                type="url"
+                                value={profile.instagram_url}
+                                onChange={(e) => setProfile({ ...profile, instagram_url: e.target.value })}
+                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-2">Locket</label>
+                            <input
+                                type="url"
+                                value={profile.locket_url}
+                                onChange={(e) => setProfile({ ...profile, locket_url: e.target.value })}
+                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-2">TikTok</label>
+                            <input
+                                type="url"
+                                value={profile.tiktok_url}
+                                onChange={(e) => setProfile({ ...profile, tiktok_url: e.target.value })}
+                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
+                            />
+                        </div>
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-2">LinkedIn</label>
-                        <input
-                            type="url"
-                            value={profile.linkedin_url}
-                            onChange={(e) => setProfile({ ...profile, linkedin_url: e.target.value })}
-                            className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-2">Facebook</label>
-                        <input
-                            type="url"
-                            value={profile.facebook_url}
-                            onChange={(e) => setProfile({ ...profile, facebook_url: e.target.value })}
-                            className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
-                        />
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium mb-2">GitHub</label>
+                            <input
+                                type="url"
+                                value={profile.github_url}
+                                onChange={(e) => setProfile({ ...profile, github_url: e.target.value })}
+                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-2">LinkedIn</label>
+                            <input
+                                type="url"
+                                value={profile.linkedin_url}
+                                onChange={(e) => setProfile({ ...profile, linkedin_url: e.target.value })}
+                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-2">Email</label>
+                            <input
+                                type="email"
+                                value={profile.email}
+                                onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none transition-all"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

@@ -11,6 +11,9 @@ export const profileData = {
         github: "https://github.com/longzu",
         linkedin: "https://linkedin.com/in/longzu",
         facebook: "https://facebook.com/longzu",
+        instagram: "",
+        tiktok: "",
+        locket: "",
     },
 };
 
