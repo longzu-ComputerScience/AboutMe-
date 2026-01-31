@@ -89,9 +89,9 @@ export default function HomePage() {
                 <div className="section-container relative z-10">
                     <div className="max-w-4xl mx-auto text-center">
                         {/* Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 animate-fade-in">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 mb-8 animate-fade-in">
                             <Sparkles className="w-4 h-4 text-amber-400" />
-                            <span className="text-sm text-dark-text/80">{t("hero.badge")}</span>
+                            <span className="text-sm text-[var(--text-secondary)]">{t("hero.badge")}</span>
                         </div>
 
                         {/* Headline */}
@@ -114,7 +114,7 @@ export default function HomePage() {
                         </h1>
 
                         {/* Subtitle */}
-                        <p className="text-lg md:text-xl text-dark-muted max-w-2xl mx-auto mb-10 animate-slide-up animate-delay-200 whitespace-pre-line">
+                        <p className="text-lg md:text-xl text-[var(--text-muted)] max-w-2xl mx-auto mb-10 animate-slide-up animate-delay-200 whitespace-pre-line">
                             {t("profile.bio")}
                         </p>
 
@@ -128,7 +128,7 @@ export default function HomePage() {
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all" />
                                 <div className="relative z-10">
                                     <div className="text-3xl mb-2">{t("hero.audience.student.title")}</div>
-                                    <p className="text-sm text-dark-muted mb-3">{t("hero.audience.student.subtitle")}</p>
+                                    <p className="text-sm text-[var(--text-muted)] mb-3">{t("hero.audience.student.subtitle")}</p>
                                     <span className="inline-flex items-center gap-1 text-emerald-400 text-sm font-medium group-hover:gap-2 transition-all">
                                         {t("hero.audience.student.cta")}
                                         <ArrowRight className="w-4 h-4" />
@@ -144,7 +144,7 @@ export default function HomePage() {
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full blur-2xl group-hover:bg-primary-500/20 transition-all" />
                                 <div className="relative z-10">
                                     <div className="text-3xl mb-2">{t("hero.audience.business.title")}</div>
-                                    <p className="text-sm text-dark-muted mb-3">{t("hero.audience.business.subtitle")}</p>
+                                    <p className="text-sm text-[var(--text-muted)] mb-3">{t("hero.audience.business.subtitle")}</p>
                                     <span className="inline-flex items-center gap-1 text-primary-400 text-sm font-medium group-hover:gap-2 transition-all">
                                         {t("hero.audience.business.cta")}
                                         <ArrowRight className="w-4 h-4" />
@@ -155,11 +155,11 @@ export default function HomePage() {
 
                         {/* Secondary CTAs */}
                         <div className="flex items-center justify-center gap-6 mt-6 animate-slide-up animate-delay-400">
-                            <Link href="/cv" className="text-sm text-dark-muted hover:text-white transition-colors flex items-center gap-1">
+                            <Link href="/cv" className="text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-1">
                                 <Download className="w-4 h-4" />
                                 {t("hero.cta.downloadCV")}
                             </Link>
-                            <Link href="/contact" className="text-sm text-dark-muted hover:text-white transition-colors">
+                            <Link href="/contact" className="text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
                                 {t("hero.cta.contactMe")} →
                             </Link>
                         </div>
@@ -180,7 +180,7 @@ export default function HomePage() {
                     <h2 className="section-title">
                         {t("sections.whatIDo.title")} <span className="gradient-text">{t("sections.whatIDo.titleHighlight")}</span>
                     </h2>
-                    <p className="text-dark-muted max-w-2xl mx-auto">
+                    <p className="text-[var(--text-muted)] max-w-2xl mx-auto">
                         {t("sections.whatIDo.description")}
                     </p>
                 </div>
@@ -192,7 +192,7 @@ export default function HomePage() {
                             <Code2 className="w-8 h-8 text-white" />
                         </div>
                         <h3 className="text-xl font-semibold mb-2">{t("services.webDev.title")}</h3>
-                        <p className="text-sm text-dark-muted">
+                        <p className="text-sm text-[var(--text-muted)]">
                             {t("services.webDev.description")}
                         </p>
                     </div>
@@ -203,7 +203,7 @@ export default function HomePage() {
                             <Palette className="w-8 h-8 text-white" />
                         </div>
                         <h3 className="text-xl font-semibold mb-2">{t("services.uiux.title")}</h3>
-                        <p className="text-sm text-dark-muted">
+                        <p className="text-sm text-[var(--text-muted)]">
                             {t("services.uiux.description")}
                         </p>
                     </div>
@@ -214,7 +214,7 @@ export default function HomePage() {
                             <Rocket className="w-8 h-8 text-white" />
                         </div>
                         <h3 className="text-xl font-semibold mb-2">{t("services.productLaunch.title")}</h3>
-                        <p className="text-sm text-dark-muted">
+                        <p className="text-sm text-[var(--text-muted)]">
                             {t("services.productLaunch.description")}
                         </p>
                     </div>
@@ -228,7 +228,7 @@ export default function HomePage() {
                         <h2 className="section-title text-left mb-2">
                             {t("sections.featuredProjects.title")} <span className="gradient-text">{t("sections.featuredProjects.titleHighlight")}</span>
                         </h2>
-                        <p className="text-dark-muted">
+                        <p className="text-[var(--text-muted)]">
                             {t("sections.featuredProjects.description")}
                         </p>
                     </div>
@@ -282,7 +282,7 @@ export default function HomePage() {
                             <span className="gradient-text">{t("sections.cta.titleHighlight")}</span>{" "}
                             {t("sections.cta.titleEnd")}
                         </h2>
-                        <p className="text-dark-muted mb-8">
+                        <p className="text-[var(--text-muted)] mb-8">
                             {t("sections.cta.description")}
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">

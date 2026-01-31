@@ -26,7 +26,7 @@ export default function ProjectCard({
     category,
 }: ProjectCardProps) {
     return (
-        <div className="group relative bg-dark-card border border-dark-border rounded-2xl overflow-hidden card-hover">
+        <div className="group relative bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden card-hover shadow-sm hover:shadow-lg">
             {/* Image */}
             <div className="relative aspect-video overflow-hidden">
                 <Image
@@ -36,7 +36,7 @@ export default function ProjectCard({
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-dark-bg via-transparent to-transparent opacity-60" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
 
                 {/* Badges */}
                 <div className="absolute top-3 left-3 flex gap-2">
@@ -59,10 +59,10 @@ export default function ProjectCard({
             {/* Content */}
             <div className="p-5 space-y-4">
                 <div>
-                    <h3 className="text-lg font-semibold text-white group-hover:text-primary-400 transition-colors duration-200">
+                    <h3 className="text-lg font-semibold text-[var(--text-primary)] group-hover:text-primary-400 transition-colors duration-200">
                         {title}
                     </h3>
-                    <p className="mt-2 text-sm text-dark-muted line-clamp-2">
+                    <p className="mt-2 text-sm text-[var(--text-muted)] line-clamp-2">
                         {description}
                     </p>
                 </div>
@@ -72,7 +72,7 @@ export default function ProjectCard({
                     {tags.slice(0, 4).map((tag) => (
                         <span
                             key={tag}
-                            className="px-2 py-1 text-xs rounded-md bg-white/5 text-dark-text/70"
+                            className="px-2 py-1 text-xs rounded-md bg-black/5 dark:bg-white/5 text-[var(--text-secondary)]"
                         >
                             {tag}
                         </span>
@@ -83,7 +83,7 @@ export default function ProjectCard({
                 <div className="flex items-center gap-3 pt-2">
                     <Link
                         href={`/projects/${slug}`}
-                        className="flex-1 py-2 text-center text-sm font-medium rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200"
+                        className="flex-1 py-2 text-center text-sm font-medium rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 transition-colors duration-200"
                     >
                         View Details
                     </Link>
@@ -92,7 +92,7 @@ export default function ProjectCard({
                             href={demoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 rounded-lg bg-white/10 hover:bg-primary-500/20 hover:text-primary-400 transition-all duration-200"
+                            className="p-2 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-primary-500/20 hover:text-primary-400 transition-all duration-200"
                             aria-label="Demo"
                         >
                             <ExternalLink className="w-4 h-4" />
@@ -103,7 +103,7 @@ export default function ProjectCard({
                             href={sourceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200"
+                            className="p-2 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 transition-colors duration-200"
                             aria-label="Source code"
                         >
                             <Github className="w-4 h-4" />

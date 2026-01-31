@@ -26,7 +26,7 @@ export default function Footer() {
     ];
 
     return (
-        <footer className="relative border-t border-dark-border bg-dark-bg/50 backdrop-blur-sm">
+        <footer className="relative border-t border-[var(--border-color)] bg-[var(--bg-primary)]/50 backdrop-blur-sm">
             {/* Scroll to Top Button */}
             <button
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -41,7 +41,7 @@ export default function Footer() {
                     {/* Brand */}
                     <div className="space-y-4">
                         <h3 className="text-xl font-bold gradient-text">LongZu</h3>
-                        <p className="text-dark-muted text-sm leading-relaxed">
+                        <p className="text-[var(--text-muted)] text-sm leading-relaxed">
                             {t("description")}
                         </p>
                         {/* Social Links */}
@@ -50,7 +50,7 @@ export default function Footer() {
                                 <Link
                                     key={social.label}
                                     href={social.href}
-                                    className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all duration-200 hover:scale-110 hover:text-primary-400"
+                                    className="w-10 h-10 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-all duration-200 hover:scale-110 hover:text-primary-400"
                                     aria-label={social.label}
                                 >
                                     <social.icon className="w-5 h-5" />
@@ -61,7 +61,7 @@ export default function Footer() {
 
                     {/* Quick Links */}
                     <div className="space-y-4">
-                        <h4 className="text-sm font-semibold uppercase tracking-wider text-dark-muted">
+                        <h4 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">
                             {t("quickLinks")}
                         </h4>
                         <nav className="grid grid-cols-2 gap-2">
@@ -69,7 +69,7 @@ export default function Footer() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="text-sm text-dark-text/70 hover:text-primary-400 transition-colors duration-200"
+                                    className="text-sm text-[var(--text-secondary)] hover:text-primary-400 transition-colors duration-200"
                                 >
                                     {link.label}
                                 </Link>
@@ -79,10 +79,10 @@ export default function Footer() {
 
                     {/* Newsletter / CTA */}
                     <div className="space-y-4">
-                        <h4 className="text-sm font-semibold uppercase tracking-wider text-dark-muted">
+                        <h4 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">
                             {t("getInTouch")}
                         </h4>
-                        <p className="text-sm text-dark-text/70">
+                        <p className="text-sm text-[var(--text-secondary)]">
                             {t("ctaDescription")}
                         </p>
                         <Link
@@ -96,13 +96,13 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="mt-12 pt-6 border-t border-dark-border flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="text-sm text-dark-muted flex items-center gap-1">
+                <div className="mt-12 pt-6 border-t border-[var(--border-color)] flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-1">
                         © {currentYear} LongZu. {t("madeWith")}
                         <Heart className="w-4 h-4 text-red-500 fill-red-500" />
                         {t("in")}
                     </p>
-                    <p className="text-xs text-dark-muted">
+                    <p className="text-xs text-[var(--text-muted)]">
                         {t("builtWith")}
                     </p>
                 </div>

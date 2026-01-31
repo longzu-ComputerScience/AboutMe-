@@ -25,6 +25,8 @@ export default function NewProjectPage() {
         description_vi: "",
         content: "",
         content_vi: "",
+        key_features: "",
+        key_features_vi: "",
         image_url: "",
         demo_url: "",
         source_url: "",
@@ -303,6 +305,80 @@ export default function NewProjectPage() {
                                         rows={3}
                                         className="w-full px-4 py-3 rounded-xl bg-white/5 border border-dark-border focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                                         placeholder="Mô tả ngắn về dự án..."
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* About This Project Section - PROMINENT */}
+                        <div className="bg-gradient-to-r from-primary-500/10 to-accent-purple/10 border-2 border-primary-500/30 rounded-2xl p-6">
+                            <div className="flex items-center gap-2 mb-4">
+                                <span className="text-2xl">📝</span>
+                                <h2 className="text-lg font-semibold text-primary-400">About This Project</h2>
+                            </div>
+                            <p className="text-sm text-dark-muted mb-4 bg-dark-card/50 p-3 rounded-lg">
+                                ⭐ This content appears on the project detail page. Make it descriptive!
+                            </p>
+
+                            <div className="space-y-4">
+                                {/* Content EN */}
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">
+                                        About Content (English)
+                                    </label>
+                                    <textarea
+                                        name="content"
+                                        value={formData.content}
+                                        onChange={handleChange}
+                                        rows={5}
+                                        className="w-full px-4 py-3 rounded-xl bg-dark-card border border-dark-border focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                                        placeholder="Describe your project in detail... What problem does it solve? How does it work?"
+                                    />
+                                </div>
+
+                                {/* Content VI */}
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">
+                                        About Content (Vietnamese)
+                                    </label>
+                                    <textarea
+                                        name="content_vi"
+                                        value={formData.content_vi}
+                                        onChange={handleChange}
+                                        rows={5}
+                                        className="w-full px-4 py-3 rounded-xl bg-dark-card border border-dark-border focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                                        placeholder="Mô tả chi tiết về dự án... Nó giải quyết vấn đề gì? Hoạt động như thế nào?"
+                                    />
+                                </div>
+
+                                {/* Key Features EN */}
+                                <div className="pt-4 border-t border-dark-border">
+                                    <label className="block text-sm font-medium mb-2">
+                                        ✨ Key Features (English)
+                                    </label>
+                                    <textarea
+                                        name="key_features"
+                                        value={formData.key_features}
+                                        onChange={handleChange}
+                                        rows={4}
+                                        className="w-full px-4 py-3 rounded-xl bg-dark-card border border-dark-border focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                                        placeholder={"Modern responsive design\nReal-time data sync\nUser authentication\nMobile-first approach"}
+                                    />
+                                    <p className="text-xs text-dark-muted mt-1">One feature per line. These will be displayed as bullet points.</p>
+                                </div>
+
+                                {/* Key Features VI */}
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">
+                                        ✨ Key Features (Vietnamese)
+                                    </label>
+                                    <textarea
+                                        name="key_features_vi"
+                                        value={formData.key_features_vi}
+                                        onChange={handleChange}
+                                        rows={4}
+                                        className="w-full px-4 py-3 rounded-xl bg-dark-card border border-dark-border focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                                        placeholder={"Thiết kế responsive hiện đại\nĐồng bộ dữ liệu realtime\nXác thực người dùng\nMobile-first"}
                                     />
                                 </div>
                             </div>

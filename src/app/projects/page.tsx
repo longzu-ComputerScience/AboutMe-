@@ -110,7 +110,7 @@ export default function ProjectsPage() {
                     <h1 className="section-title">
                         {t("projects.title")} <span className="gradient-text">{t("projects.titleHighlight")}</span>
                     </h1>
-                    <p className="text-dark-muted max-w-2xl mx-auto">
+                    <p className="text-[var(--text-muted)] max-w-2xl mx-auto">
                         {t("projects.description")}
                     </p>
                 </div>
@@ -121,20 +121,20 @@ export default function ProjectsPage() {
                 <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
                     {/* Search */}
                     <div className="relative w-full lg:w-80">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-dark-muted" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-muted)]" />
                         <input
                             type="text"
                             placeholder={t("projects.searchPlaceholder")}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-dark-card border border-dark-border focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all"
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)] focus:border-primary-500/50 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all"
                         />
                     </div>
 
-                    <div className="flex flex-wrap gap-4 items-center">
+                    <div className="flex flex-col sm:flex-row flex-wrap gap-4 w-full lg:w-auto">
                         {/* Category Filter */}
-                        <div className="flex items-center gap-2">
-                            <Filter className="w-4 h-4 text-dark-muted" />
+                        <div className="flex flex-wrap items-center gap-2">
+                            <Filter className="w-4 h-4 text-[var(--text-muted)] shrink-0" />
                             <div className="flex flex-wrap gap-2">
                                 {categories.map((cat) => (
                                     <button
@@ -142,7 +142,7 @@ export default function ProjectsPage() {
                                         onClick={() => setCategory(cat)}
                                         className={`px-3 py-1.5 text-sm rounded-lg transition-all ${category === cat
                                             ? "bg-primary-500 text-white"
-                                            : "bg-white/5 hover:bg-white/10 text-dark-text/70"
+                                            : "bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[var(--text-secondary)]"
                                             }`}
                                     >
                                         {cat === "All" ? t("projects.filters.all") : cat}
@@ -152,7 +152,7 @@ export default function ProjectsPage() {
                         </div>
 
                         {/* Price Filter */}
-                        <div className="flex gap-2 ml-4">
+                        <div className="flex gap-2 sm:ml-4">
                             {filters.map((filter) => (
                                 <button
                                     key={filter}
@@ -163,7 +163,7 @@ export default function ProjectsPage() {
                                             : filter === "Paid"
                                                 ? "bg-amber-500 text-white"
                                                 : "bg-primary-500 text-white"
-                                        : "bg-white/5 hover:bg-white/10 text-dark-text/70"
+                                        : "bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[var(--text-secondary)]"
                                         }`}
                                 >
                                     {filter === "All"
@@ -202,7 +202,7 @@ export default function ProjectsPage() {
                     </div>
                 ) : (
                     <div className="text-center py-16">
-                        <p className="text-dark-muted text-lg">{t("projects.noResults")}</p>
+                        <p className="text-[var(--text-muted)] text-lg">{t("projects.noResults")}</p>
                         <button
                             onClick={() => {
                                 setSearch("");
