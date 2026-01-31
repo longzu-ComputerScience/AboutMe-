@@ -93,119 +93,137 @@ export default function Header() {
     };
 
     return (
-        <header
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                ? "bg-[var(--bg-primary)]/90 backdrop-blur-lg shadow-lg border-b border-[var(--border-color)]"
-                : "bg-transparent"
-                }`}
-            style={{ height: "var(--header-height)" }}
-        >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
-                <div className="flex items-center justify-between h-full">
-                    {/* Logo */}
-                    <Link
-                        href="/"
-                        className="flex items-center gap-2 text-xl font-bold group"
-                    >
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-purple flex items-center justify-center shadow-glow-sm group-hover:shadow-glow-md transition-shadow duration-300">
-                            <Code2 className="w-5 h-5 text-white" />
-                        </div>
-                        <span className="gradient-text hidden sm:inline">LongZu</span>
-                    </Link>
-
-                    {/* Desktop Navigation */}
-                    <nav className="hidden md:flex items-center gap-1">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive(link.href)
-                                    ? "text-primary-600 dark:text-white bg-primary-500/10 dark:bg-white/10 border-b-2 border-primary-500"
-                                    : "text-[var(--text-primary)]/80 hover:text-primary-500 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
-                                    }`}
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
-                        {/* Admin link - only show when logged in */}
-                        {user && (
-                            <Link
-                                href="/admin/dashboard"
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${pathname.startsWith("/admin")
-                                    ? "text-amber-400 bg-amber-500/10"
-                                    : "text-amber-400/80 hover:text-amber-400 hover:bg-amber-500/10"
-                                    }`}
-                            >
-                                <Settings className="w-4 h-4 inline mr-1" />
-                                {t("admin")}
-                            </Link>
-                        )}
-                    </nav>
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-2">
-                        {/* Language Toggle */}
-                        <button
-                            onClick={toggleLanguage}
-                            disabled={isPending}
-                            className={`px-2 py-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors duration-200 text-sm font-medium flex items-center gap-1 ${isPending ? 'opacity-50' : ''}`}
-                            aria-label="Toggle language"
-                            title={isVietnamese ? "Switch to English" : "Chuyển sang Tiếng Việt"}
+        <>
+            <header
+                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+                    ? "bg-[var(--bg-primary)]/90 backdrop-blur-lg shadow-lg border-b border-[var(--border-color)]"
+                    : "bg-transparent"
+                    }`}
+                style={{ height: "var(--header-height)" }}
+            >
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+                    <div className="flex items-center justify-between h-full">
+                        {/* Logo */}
+                        <Link
+                            href="/"
+                            className="flex items-center gap-2 text-xl font-bold group"
                         >
-                            <span className={`transition-opacity ${isVietnamese ? "opacity-100" : "opacity-50"}`}>🇻🇳</span>
-                            <span className="text-[var(--text-muted)]">/</span>
-                            <span className={`transition-opacity ${!isVietnamese ? "opacity-100" : "opacity-50"}`}>🇺🇸</span>
-                        </button>
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-purple flex items-center justify-center shadow-glow-sm group-hover:shadow-glow-md transition-shadow duration-300">
+                                <Code2 className="w-5 h-5 text-white" />
+                            </div>
+                            <span className="gradient-text hidden sm:inline">LongZu</span>
+                        </Link>
 
-                        {/* Theme Toggle */}
-                        <button
-                            onClick={toggleTheme}
-                            className="p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors duration-200"
-                            aria-label="Toggle theme"
-                        >
-                            {isDark ? (
-                                <Sun className="w-5 h-5 text-amber-400" />
-                            ) : (
-                                <Moon className="w-5 h-5 text-primary-400" />
+                        {/* Desktop Navigation */}
+                        <nav className="hidden md:flex items-center gap-1">
+                            {navLinks.map((link) => (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive(link.href)
+                                        ? "text-primary-600 dark:text-white bg-primary-500/10 dark:bg-white/10 border-b-2 border-primary-500"
+                                        : "text-[var(--text-primary)]/80 hover:text-primary-500 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
+                                        }`}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                            {/* Admin link - only show when logged in */}
+                            {user && (
+                                <Link
+                                    href="/admin/dashboard"
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${pathname.startsWith("/admin")
+                                        ? "text-amber-400 bg-amber-500/10"
+                                        : "text-amber-400/80 hover:text-amber-400 hover:bg-amber-500/10"
+                                        }`}
+                                >
+                                    <Settings className="w-4 h-4 inline mr-1" />
+                                    {t("admin")}
+                                </Link>
                             )}
-                        </button>
+                        </nav>
 
-                        {/* Logout button - only show when logged in */}
-                        {user && (
+                        {/* Actions */}
+                        <div className="flex items-center gap-2">
+                            {/* Language Toggle */}
                             <button
-                                onClick={handleLogout}
-                                className="hidden sm:inline-flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors duration-200"
-                                title="Đăng xuất"
+                                onClick={toggleLanguage}
+                                disabled={isPending}
+                                className={`px-2 py-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors duration-200 text-sm font-medium flex items-center gap-1 ${isPending ? 'opacity-50' : ''}`}
+                                aria-label="Toggle language"
+                                title={isVietnamese ? "Switch to English" : "Chuyển sang Tiếng Việt"}
                             >
-                                <LogOut className="w-4 h-4" />
+                                <span className={`transition-opacity ${isVietnamese ? "opacity-100" : "opacity-50"}`}>🇻🇳</span>
+                                <span className="text-[var(--text-muted)]">/</span>
+                                <span className={`transition-opacity ${!isVietnamese ? "opacity-100" : "opacity-50"}`}>🇺🇸</span>
                             </button>
-                        )}
 
-                        {/* Mobile Menu Button */}
-                        <button
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className={`md:hidden p-2.5 rounded-xl transition-all duration-200 border-2 ${isMobileMenuOpen
-                                ? "bg-primary-500 border-primary-500 text-white shadow-glow-sm"
-                                : "bg-[var(--bg-card)] border-[var(--border-color)] hover:border-primary-500/50 hover:bg-primary-500/10"
-                                }`}
-                            aria-label="Toggle menu"
-                        >
-                            {isMobileMenuOpen ? (
-                                <X className="w-5 h-5" />
-                            ) : (
-                                <Menu className="w-5 h-5" />
+                            {/* Theme Toggle */}
+                            <button
+                                onClick={toggleTheme}
+                                className="p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors duration-200"
+                                aria-label="Toggle theme"
+                            >
+                                {isDark ? (
+                                    <Sun className="w-5 h-5 text-amber-400" />
+                                ) : (
+                                    <Moon className="w-5 h-5 text-primary-400" />
+                                )}
+                            </button>
+
+                            {/* Logout button - only show when logged in */}
+                            {user && (
+                                <button
+                                    onClick={handleLogout}
+                                    className="hidden sm:inline-flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors duration-200"
+                                    title="Đăng xuất"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                </button>
                             )}
-                        </button>
+
+                            {/* Mobile Menu Button */}
+                            <button
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                className={`md:hidden p-2.5 rounded-xl transition-all duration-200 border-2 ${isMobileMenuOpen
+                                    ? "bg-primary-500 border-primary-500 text-white shadow-glow-sm"
+                                    : "bg-[var(--bg-card)] border-[var(--border-color)] hover:border-primary-500/50 hover:bg-primary-500/10"
+                                    }`}
+                                aria-label="Toggle menu"
+                            >
+                                {isMobileMenuOpen ? (
+                                    <X className="w-5 h-5" />
+                                ) : (
+                                    <Menu className="w-5 h-5" />
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Mobile Menu */}
+            </header>
+
+            {/* Mobile Menu Backdrop Overlay - Outside header for proper stacking */}
             <div
-                className={`md:hidden absolute top-full left-0 right-0 h-[calc(100vh-100%)] bg-gradient-to-b from-[var(--bg-primary)]/98 via-[var(--bg-primary)]/95 to-[var(--bg-primary)]/90 backdrop-blur-xl z-50 border-t border-[var(--border-color)] transition-all duration-300 overflow-y-auto ${isMobileMenuOpen
+                className={`md:hidden fixed inset-0 bg-black/60 backdrop-blur-md transition-all duration-300 ${isMobileMenuOpen
                     ? "opacity-100 visible"
-                    : "opacity-0 invisible"
+                    : "opacity-0 invisible pointer-events-none"
                     }`}
+                style={{ zIndex: 45 }}
+                onClick={() => setIsMobileMenuOpen(false)}
+            />
+
+            {/* Mobile Menu Content - Outside header for proper stacking */}
+            <div
+                className={`md:hidden fixed left-0 right-0 bg-gradient-to-b from-[var(--bg-primary)] via-[var(--bg-primary)]/98 to-[var(--bg-primary)]/95 border-t border-[var(--border-color)] transition-all duration-300 overflow-y-auto ${isMobileMenuOpen
+                    ? "opacity-100 visible translate-y-0"
+                    : "opacity-0 invisible -translate-y-4 pointer-events-none"
+                    }`}
+                style={{
+                    top: 'var(--header-height)',
+                    maxHeight: 'calc(100vh - var(--header-height))',
+                    zIndex: 49
+                }}
             >
                 <nav className="flex flex-col p-4 gap-2">
                     {navLinks.map((link) => (
@@ -247,6 +265,6 @@ export default function Header() {
                     )}
                 </nav>
             </div>
-        </header>
+        </>
     );
 }
