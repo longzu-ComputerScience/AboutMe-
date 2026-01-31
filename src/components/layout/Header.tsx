@@ -202,9 +202,9 @@ export default function Header() {
 
             {/* Mobile Menu */}
             <div
-                className={`md:hidden fixed top-[72px] left-0 right-0 bottom-0 bg-[var(--bg-primary)] z-50 border-t border-[var(--border-color)] transition-all duration-300 overflow-y-auto ${isMobileMenuOpen
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 -translate-y-4 pointer-events-none"
+                className={`md:hidden absolute top-full left-0 right-0 h-[calc(100vh-100%)] bg-gradient-to-b from-[var(--bg-primary)]/98 via-[var(--bg-primary)]/95 to-[var(--bg-primary)]/90 backdrop-blur-xl z-50 border-t border-[var(--border-color)] transition-all duration-300 overflow-y-auto ${isMobileMenuOpen
+                    ? "opacity-100 visible"
+                    : "opacity-0 invisible"
                     }`}
             >
                 <nav className="flex flex-col p-4 gap-2">
