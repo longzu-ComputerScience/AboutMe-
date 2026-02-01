@@ -6,8 +6,27 @@ import { MapPin, Mail, Calendar, Github, Linkedin, Facebook, Instagram, Link as 
 import { useTranslations } from "next-intl";
 import SkillBadge from "@/components/ui/SkillBadge";
 import Timeline from "@/components/ui/Timeline";
-import { profileData, skills, timeline } from "@/lib/mockData";
+import { profileData, skills as mockSkills, timeline as mockTimeline } from "@/lib/mockData";
 import { supabase } from "@/lib/supabase";
+
+interface Skill {
+    id?: string;
+    name: string;
+    icon: string;
+    level: "expert" | "advanced" | "intermediate";
+    category: string;
+}
+
+interface TimelineItem {
+    id?: string;
+    year: string;
+    title: string;
+    title_vi?: string | null;
+    description?: string | null;
+    description_vi?: string | null;
+    organization?: string | null;
+    type: "work" | "education" | "achievement";
+}
 
 interface Profile {
     id: string;
@@ -32,6 +51,8 @@ interface Profile {
 export default function AboutPage() {
     const t = useTranslations();
     const [profile, setProfile] = useState<Profile | null>(null);
+    const [skills, setSkills] = useState<Skill[]>([]);
+    const [timeline, setTimeline] = useState<TimelineItem[]>([]);
     const [isVietnamese, setIsVietnamese] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -57,20 +78,48 @@ export default function AboutPage() {
     }, []);
 
     useEffect(() => {
-        // Fetch profile from Supabase
-        const fetchProfile = async () => {
-            const { data } = await supabase
+        // Fetch all data from Supabase
+        const fetchData = async () => {
+            // Fetch profile
+            const { data: profileData } = await supabase
                 .from("profiles")
                 .select("*")
                 .limit(1)
                 .single();
 
-            if (data) {
-                setProfile(data);
+            if (profileData) {
+                setProfile(profileData);
             }
+
+            // Fetch skills
+            const { data: skillsData } = await supabase
+                .from("skills")
+                .select("*")
+                .order("sort_order", { ascending: true });
+
+            if (skillsData && skillsData.length > 0) {
+                setSkills(skillsData);
+            } else {
+                // Fallback to mockData if no skills in database
+                setSkills(mockSkills);
+            }
+
+            // Fetch timeline
+            const { data: timelineData } = await supabase
+                .from("timeline")
+                .select("*")
+                .order("sort_order", { ascending: true });
+
+            if (timelineData && timelineData.length > 0) {
+                setTimeline(timelineData);
+            } else {
+                // Fallback to mockData if no timeline in database
+                setTimeline(mockTimeline as TimelineItem[]);
+            }
+
             setIsLoading(false);
         };
-        fetchProfile();
+        fetchData();
     }, []);
 
     // Use Supabase data if available, fallback to mockData
@@ -93,21 +142,21 @@ export default function AboutPage() {
     const avatarUrl = profile?.avatar_url || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80";
     const socialSources = hasProfile
         ? {
-              facebook: profile?.facebook_url || "",
-              instagram: profile?.instagram_url || "",
-              locket: profile?.locket_url || "",
-              tiktok: profile?.tiktok_url || "",
-              github: profile?.github_url || "",
-              linkedin: profile?.linkedin_url || "",
-          }
+            facebook: profile?.facebook_url || "",
+            instagram: profile?.instagram_url || "",
+            locket: profile?.locket_url || "",
+            tiktok: profile?.tiktok_url || "",
+            github: profile?.github_url || "",
+            linkedin: profile?.linkedin_url || "",
+        }
         : {
-              facebook: profileData.social.facebook || "",
-              instagram: profileData.social.instagram || "",
-              locket: profileData.social.locket || "",
-              tiktok: profileData.social.tiktok || "",
-              github: profileData.social.github || "",
-              linkedin: profileData.social.linkedin || "",
-          };
+            facebook: profileData.social.facebook || "",
+            instagram: profileData.social.instagram || "",
+            locket: profileData.social.locket || "",
+            tiktok: profileData.social.tiktok || "",
+            github: profileData.social.github || "",
+            linkedin: profileData.social.linkedin || "",
+        };
 
     const socialLinks = [
         {
@@ -299,7 +348,13 @@ export default function AboutPage() {
                 </div>
 
                 <div className="max-w-3xl mx-auto">
-                    <Timeline items={timeline} />
+                    <Timeline items={timeline.map(item => ({
+                        year: item.year,
+                        title: isVietnamese && item.title_vi ? item.title_vi : item.title,
+                        description: (isVietnamese && item.description_vi ? item.description_vi : item.description) || "",
+                        organization: item.organization || undefined,
+                        type: item.type,
+                    }))} />
                 </div>
             </section>
         </>

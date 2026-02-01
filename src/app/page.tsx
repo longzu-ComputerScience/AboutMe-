@@ -123,12 +123,22 @@ export default function HomePage() {
                             {/* Student CTA */}
                             <Link
                                 href="/blog"
-                                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 p-6 hover:border-emerald-500/40 transition-all duration-300 hover:scale-[1.02]"
+                                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 p-5 hover:border-emerald-500/40 transition-all duration-300 hover:scale-[1.02]"
                             >
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all" />
                                 <div className="relative z-10">
-                                    <div className="text-3xl mb-2">{t("hero.audience.student.title")}</div>
-                                    <p className="text-sm text-[var(--text-muted)] mb-3">{t("hero.audience.student.subtitle")}</p>
+                                    <div className="text-2xl font-semibold mb-3">{t("hero.audience.student.title")}</div>
+                                    <ul className="space-y-1.5 mb-4">
+                                        <li className="flex items-center gap-2 text-sm text-white/90">
+                                            <span className="text-emerald-400">✦</span> Mẹo học IT
+                                        </li>
+                                        <li className="flex items-center gap-2 text-sm text-white/90">
+                                            <span className="text-emerald-400">✦</span> Tool hữu ích
+                                        </li>
+                                        <li className="flex items-center gap-2 text-sm text-white/90">
+                                            <span className="text-emerald-400">✦</span> Project tham khảo
+                                        </li>
+                                    </ul>
                                     <span className="inline-flex items-center gap-1 text-emerald-400 text-sm font-medium group-hover:gap-2 transition-all">
                                         {t("hero.audience.student.cta")}
                                         <ArrowRight className="w-4 h-4" />
@@ -139,12 +149,22 @@ export default function HomePage() {
                             {/* Business CTA */}
                             <Link
                                 href="/services"
-                                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500/10 to-accent-purple/10 border border-primary-500/20 p-6 hover:border-primary-500/40 transition-all duration-300 hover:scale-[1.02]"
+                                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500/10 to-accent-purple/10 border border-primary-500/20 p-5 hover:border-primary-500/40 transition-all duration-300 hover:scale-[1.02]"
                             >
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full blur-2xl group-hover:bg-primary-500/20 transition-all" />
                                 <div className="relative z-10">
-                                    <div className="text-3xl mb-2">{t("hero.audience.business.title")}</div>
-                                    <p className="text-sm text-[var(--text-muted)] mb-3">{t("hero.audience.business.subtitle")}</p>
+                                    <div className="text-2xl font-semibold mb-3">{t("hero.audience.business.title")}</div>
+                                    <ul className="space-y-1.5 mb-4">
+                                        <li className="flex items-center gap-2 text-sm text-white/90">
+                                            <span className="text-primary-400">✦</span> Thiết kế Website
+                                        </li>
+                                        <li className="flex items-center gap-2 text-sm text-white/90">
+                                            <span className="text-primary-400">✦</span> Hợp tác Freelance
+                                        </li>
+                                        <li className="flex items-center gap-2 text-sm text-white/90">
+                                            <span className="text-primary-400">✦</span> Bán TK ChatGPT Plus
+                                        </li>
+                                    </ul>
                                     <span className="inline-flex items-center gap-1 text-primary-400 text-sm font-medium group-hover:gap-2 transition-all">
                                         {t("hero.audience.business.cta")}
                                         <ArrowRight className="w-4 h-4" />
